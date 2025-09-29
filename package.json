@@ -7,6 +7,7 @@
     "build": "remix build",
     "dev": "rm -rf build/ public/build/ .cache/ && remix dev --manual",
     "start": "remix-serve ./build/index.js",
+    "prod": "rm -rf build/ public/build/ .cache/ && pnpm build && pnpm start",
     "typecheck": "tsc",
     "update-images": "node update-images.js"
   },
