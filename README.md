@@ -102,10 +102,30 @@ pnpm start
 
 ## Deployment
 
-### Netlify
+### GitHub Actions + Netlify (Recommended)
+
+This project includes a GitHub Actions workflow for automatic deployment to Netlify.
+
+#### Setup Instructions:
+
+1. **Fork or clone this repository**
+2. **Create a Netlify site:**
+   - Go to [netlify.com](https://netlify.com) and create a new site
+   - Note your Site ID from the site settings
+3. **Get Netlify Auth Token:**
+   - Go to [app.netlify.com/user/applications#personal-access-tokens](https://app.netlify.com/user/applications#personal-access-tokens)
+   - Generate a new personal access token
+4. **Add GitHub Secrets:**
+   - Go to your GitHub repository → Settings → Secrets and variables → Actions
+   - Add these secrets:
+     - `NETLIFY_AUTH_TOKEN`: Your Netlify personal access token
+     - `NETLIFY_SITE_ID`: Your Netlify site ID
+5. **Push to main branch** - The workflow will automatically deploy!
+
+#### Manual Netlify Deployment
 
 1. Build the project: `pnpm build`
-2. Deploy the `build` folder to Netlify
+2. Deploy the `public` folder to Netlify
 3. Set environment variables in Netlify dashboard
 
 ### Vercel
