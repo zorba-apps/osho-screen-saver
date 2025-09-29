@@ -1,6 +1,6 @@
 [build]
-  command = "yarn build"
-  publish = "build/client"
+  command = "pnpm build"
+  publish = "public"
 
 [build.environment]
   NODE_VERSION = "20"
