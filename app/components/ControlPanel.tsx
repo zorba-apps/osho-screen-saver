@@ -235,6 +235,22 @@ export default function ControlPanel({
             </div>
           </div>
         </div>
+
+        {/* Buy Me a Coffee */}
+        <div className="flex justify-center">
+          <a 
+            href="https://www.buymeacoffee.com/zorzen" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="transition-transform duration-200 hover:scale-105"
+          >
+            <img 
+              src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=zorzen&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" 
+              alt="Buy me a coffee" 
+              className="rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200"
+            />
+          </a>
+        </div>
       </div>
     </div>
   );
