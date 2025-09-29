@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev --manual",
+    "dev": "rm -rf build/ public/build/ .cache/ && remix dev --manual",
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc",
     "update-images": "node update-images.js"
