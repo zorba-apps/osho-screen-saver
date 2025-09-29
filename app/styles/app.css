@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply h-full w-full overflow-hidden;
+  }
+  
+  body {
+    @apply bg-black text-white;
+  }
+}
+
+@layer components {
+  .screen-saver-container {
+    @apply fixed inset-0 w-full h-full overflow-hidden;
+  }
+  
+  .image-container {
+    @apply absolute inset-0 w-full h-full;
+  }
+  
+  .image-fit {
+    @apply w-full h-full object-cover;
+    animation: gentle-zoom 8s ease-in-out infinite;
+  }
+  
+  .image-contain {
+    @apply w-full h-full object-contain;
+    animation: gentle-zoom 8s ease-in-out infinite;
+  }
+  
+  @keyframes gentle-zoom {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+  
+  .control-panel {
+    @apply fixed top-4 right-4 bg-black bg-opacity-75 backdrop-blur-sm rounded-lg p-4 transition-opacity duration-300;
+  }
+
+  .hidden {
+    @apply opacity-0 pointer-events-none;
+  }
+
+  .control-panel.hidden {
+    @apply opacity-0 pointer-events-none;
+  }
+
+  .control-button {
+    @apply bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-3 py-2 rounded transition-colors duration-200;
+  }
+
+  .control-button.active {
+    @apply bg-white bg-opacity-40;
+  }
+
+  .transition-fade {
+    @apply transition-opacity duration-1000 ease-in-out;
+  }
+
+  .transition-slide {
+    @apply transition-transform duration-1000 ease-in-out;
+  }
+}

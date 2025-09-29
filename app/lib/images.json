@@ -1,0 +1,19 @@
+{
+  "oshoImages": [
+    "Osho_23_rbfuo0",
+    "Osho_7_zyyutn", 
+    "Osho_1_rdgr7x",
+    "Osho_26_rdf2fz",
+    "Osho_31_b3xkxl",
+    "Osho_16_ynec4r",
+    "Osho_25_nlx6dd"
+  ],
+  "cloudName": "dimgca1xu",
+  "transformations": {
+    "width": 1920,
+    "height": 1080,
+    "crop": "fill",
+    "format": "auto",
+    "quality": "auto"
+  }
+}
