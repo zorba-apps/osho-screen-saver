@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { TransitionType } from '../lib/transitionService';
 import { getColorScheme } from '../lib/colorUtils';
 import IconButton from './IconButton';
+import TransitionSelector from './TransitionSelector';
 
 interface ControlPanelProps {
   isPlaying: boolean;
@@ -10,7 +11,6 @@ interface ControlPanelProps {
   onTransitionTypeChange: (type: TransitionType) => void;
   transitionDuration: number;
   onTransitionDurationChange: (duration: number) => void;
-  currentImageName?: string;
   onNextImage?: () => void;
   onPreviousImage?: () => void;
   isDarkBackground?: boolean;
@@ -23,17 +23,6 @@ interface ControlPanelProps {
   onDownloadImage?: () => void;
 }
 
-const transitionTypes: { value: TransitionType; label: string }[] = [
-  { value: 'fade', label: 'Fade' },
-  { value: 'slide-left', label: 'Slide Left' },
-  { value: 'slide-right', label: 'Slide Right' },
-  { value: 'slide-up', label: 'Slide Up' },
-  { value: 'slide-down', label: 'Slide Down' },
-  { value: 'zoom-in', label: 'Zoom In' },
-  { value: 'zoom-out', label: 'Zoom Out' },
-  { value: 'zoom-pulse', label: 'Zoom Pulse' },
-  { value: 'collage', label: 'Collage' },
-];
 
 export default function ControlPanel({
   isPlaying,
@@ -42,7 +31,6 @@ export default function ControlPanel({
   onTransitionTypeChange,
   transitionDuration,
   onTransitionDurationChange,
-  currentImageName,
   onNextImage,
   onPreviousImage,
   isDarkBackground = true,
@@ -233,34 +221,13 @@ export default function ControlPanel({
           </button>
         </div>
 
-        {/* Current Image Info */}
-        {currentImageName && (
-          <div className={`p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>
-            <div className="flex items-center space-x-2 mb-2">
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-              <div className={`text-xs font-semibold ${colors.textSecondary} uppercase tracking-wide`}>Now Playing</div>
-            </div>
-            <div className={`text-sm font-medium ${colors.text} truncate`}>{currentImageName}</div>
-          </div>
-        )}
 
         {/* Transition Type Selection */}
-        <div className="space-y-3">
-          <label className={`block text-sm font-semibold ${colors.text} mb-3`}>
-            Transition Effect
-          </label>
-          <select
-            value={transitionType}
-            onChange={(e) => onTransitionTypeChange(e.target.value as TransitionType)}
-            className={`w-full ${colors.background} ${colors.border} border rounded-xl px-4 py-3 ${colors.text} text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 backdrop-blur-sm`}
-          >
-            {transitionTypes.map((type) => (
-              <option key={type.value} value={type.value} className={`${isDarkBackground ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-800'}`}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <TransitionSelector
+          transitionType={transitionType}
+          onTransitionTypeChange={onTransitionTypeChange}
+          isDarkBackground={isDarkBackground}
+        />
 
         {/* Transition Duration */}
         <div className="space-y-3">

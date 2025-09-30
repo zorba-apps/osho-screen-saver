@@ -6,7 +6,7 @@ interface ScreenSaverProps {
   isPlaying: boolean;
   transitionType: TransitionType;
   transitionDuration: number;
-  onImageChange?: (image: ImageData) => void;
+  onImageChange?: (image: ImageData, index: number, total: number) => void;
   onNextImage?: () => void;
   onPreviousImage?: () => void;
   onTextColorChange?: (isDark: boolean) => void;
@@ -137,7 +137,7 @@ export default function ScreenSaver({
         nextImageRef.current = temp;
         
         setCurrentImageIndex(nextIndex);
-        onImageChange?.(nextImage);
+        onImageChange?.(nextImage, nextIndex, images.length);
       }
     );
   }, [currentImageIndex, images, onImageChange]);
@@ -145,12 +145,29 @@ export default function ScreenSaver({
   // Navigation functions
   const goToNextImage = useCallback(() => {
     if (images.length > 1) {
+      // Clear existing timer to prevent immediate automatic transition
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      
       transitionToNextImage();
+      
+      // Restart timer if playing
+      if (isPlaying) {
+        intervalRef.current = setInterval(transitionToNextImage, transitionDuration + 2000);
+      }
     }
-  }, [transitionToNextImage, images.length]);
+  }, [transitionToNextImage, images.length, isPlaying, transitionDuration]);
 
   const goToPreviousImage = useCallback(() => {
     if (images.length === 0 || !currentImageRef.current || !nextImageRef.current) return;
+
+    // Clear existing timer to prevent immediate automatic transition
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
 
     const prevIndex = currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1;
     const prevImage = images[prevIndex];
@@ -176,10 +193,15 @@ export default function ScreenSaver({
         nextImageRef.current = temp;
         
         setCurrentImageIndex(prevIndex);
-        onImageChange?.(prevImage);
+        onImageChange?.(prevImage, prevIndex, images.length);
+        
+        // Restart timer if playing
+        if (isPlaying) {
+          intervalRef.current = setInterval(transitionToNextImage, transitionDuration + 2000);
+        }
       }
     );
-  }, [currentImageIndex, images]);
+  }, [currentImageIndex, images, isPlaying, transitionDuration, transitionToNextImage]);
 
   // Expose navigation functions to parent
   useEffect(() => {

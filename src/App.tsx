@@ -12,6 +12,8 @@ function App() {
   const [transitionType, setTransitionType] = useState<TransitionType>('fade')
   const [transitionDuration, setTransitionDuration] = useState(3000)
   const [currentImage, setCurrentImage] = useState<ImageData | null>(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [totalImages, setTotalImages] = useState(0)
   const [isDarkBackground, setIsDarkBackground] = useState(true)
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [keepPanelVisible, setKeepPanelVisible] = useState(false)
@@ -107,8 +109,10 @@ function App() {
     setIsPlaying(prev => !prev)
   }
 
-  const handleImageChange = (image: ImageData) => {
+  const handleImageChange = (image: ImageData, index: number, total: number) => {
     setCurrentImage(image)
+    setCurrentImageIndex(index)
+    setTotalImages(total)
   }
 
   const handleTextColorChange = (isDark: boolean) => {
@@ -198,7 +202,6 @@ function App() {
           onTransitionTypeChange={setTransitionType}
           transitionDuration={transitionDuration}
           onTransitionDurationChange={setTransitionDuration}
-          currentImageName={currentImage?.name}
           onNextImage={handleNextImage}
           onPreviousImage={handlePreviousImage}
           isDarkBackground={isDarkBackground}
