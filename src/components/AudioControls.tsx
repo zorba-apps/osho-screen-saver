@@ -71,8 +71,8 @@ export default function AudioControls({
   const progressPercentage = audioDuration > 0 ? (audioCurrentTime / audioDuration) * 100 : 0;
 
   return (
-    <div className={`space-y-3 p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>      
-      <div className="flex items-center space-x-2">
+    <div className={`space-y-3 p-4 rounded-xl  ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>      
+      <div className="w-full">
         <input
           type="file"
           accept="audio/*"
@@ -82,7 +82,7 @@ export default function AudioControls({
         />
         <button
           onClick={() => fileInputRef.current?.click()}
-          className={`px-4 py-2 rounded-lg ${colors.background} ${colors.backgroundHover} ${colors.textSecondary} hover:${colors.text} transition-all duration-200 hover:scale-105 text-sm`}
+          className={`w-full px-4 py-2 rounded-lg ${colors.background} ${colors.backgroundHover} ${colors.textSecondary} hover:${colors.text} transition-all duration-200 hover:scale-105 text-sm`}
         >
           {audioFile ? 'Change Osho Discourse' : 'Select Osho Discourse'}
         </button>
