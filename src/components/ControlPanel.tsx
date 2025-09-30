@@ -115,8 +115,8 @@ export default function ControlPanel({
   if (!isVisible) return null;
 
   return (
-    <div className={`fixed ${isMobile ? 'top-2 right-2 left-2' : 'top-4 right-4'} ${colors.background} ${colors.border} backdrop-blur-2xl ${isMobile ? 'rounded-2xl p-4' : 'rounded-3xl p-6'} shadow-2xl border z-50 ${isMobile ? 'min-w-full' : 'min-w-80'} animate-in slide-in-from-right duration-300 liquid-glass`}>
-      <div className="space-y-6">
+    <div className={`fixed ${isMobile ? 'top-2 right-2 left-2 bottom-2' : 'top-4 right-4'} ${colors.background} ${colors.border} backdrop-blur-2xl ${isMobile ? 'rounded-2xl p-4' : 'rounded-3xl p-6'} shadow-2xl border z-50 ${isMobile ? 'min-w-full max-h-[calc(100vh-1rem)]' : 'min-w-80'} animate-in slide-in-from-right duration-300 liquid-glass`}>
+      <div className={`space-y-6 ${isMobile ? 'overflow-y-auto max-h-full pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent' : ''}`}>
         {/* Header */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
