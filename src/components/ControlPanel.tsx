@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TransitionType } from '~/lib/transitionService';
+import { TransitionType } from '../lib/transitionService';
 
 interface ControlPanelProps {
   isPlaying: boolean;

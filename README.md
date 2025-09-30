@@ -1,24 +1,26 @@
 # Osho Screen Saver
 
-A beautiful, full-screen screen saver application built with Remix, featuring elegant transitions and Cloudinary integration. Designed for large displays with high-quality image handling.
+A beautiful, full-screen screen saver application built with React + Vite, featuring cinematic drone-like transitions and Cloudinary integration. Designed for large displays with high-quality image handling.
 
 ## Features
 
 - **Full-screen display** optimized for large screens (1000m+ displays)
-- **Multiple transition effects**: fade, slide, zoom, and collage layouts
+- **Cinematic transitions** with drone-like zoom effects and 3D transforms
 - **Cloudinary integration** for high-quality image hosting
 - **Responsive design** that scales beautifully
 - **Control panel** with play/pause, speed control, and transition selection
 - **Keyboard shortcuts** for easy navigation
 - **Image preloading** for smooth transitions
-- **Smart image fitting** with artistic collage layouts for non-fitting images
+- **Hardware acceleration** for buttery smooth animations
 
 ## Transition Effects
 
-1. **Fade** - Smooth crossfade between images
+1. **Fade** - Smooth crossfade with subtle zoom effects
 2. **Slide** - Images slide in from left, right, up, or down
-3. **Zoom** - Images zoom in or out during transitions
-4. **Collage** - Creates artistic mosaic layouts for non-fitting images
+3. **Zoom In** - Drone camera flying closer to the image
+4. **Zoom Out** - Drone camera flying away from the image
+5. **Zoom Pulse** - Drone hovering then diving in for dramatic effect
+6. **Collage** - Creates artistic mosaic layouts for non-fitting images
 
 ## Setup Instructions
 
@@ -34,7 +36,7 @@ The app comes pre-configured with 7 Osho images from Cloudinary, so it works out
 
 #### Easy Image Updates
 
-To update the image list, simply edit `app/lib/images.json`:
+To update the image list, simply edit `src/lib/images.json`:
 
 ```json
 {
@@ -91,48 +93,55 @@ VITE_CLOUDINARY_API_SECRET=your-api-secret
 pnpm dev
 ```
 
-The app will be available at `http://localhost:3000` (or the port shown in terminal)
+The app will be available at `http://localhost:5173` (Vite default port)
 
 ### 4. Build for Production
 
 ```bash
+# Development
+pnpm dev
+
+# Production build
 pnpm build
-pnpm start
+
+# Preview production build
+pnpm preview
 ```
 
 ## Deployment
 
-### GitHub Actions + Netlify (Recommended)
+### Netlify (Recommended)
 
-This project includes a GitHub Actions workflow for automatic deployment to Netlify.
+This React app is optimized for Netlify deployment with automatic builds and deployments.
 
 #### Setup Instructions:
 
 1. **Fork or clone this repository**
 2. **Create a Netlify site:**
    - Go to [netlify.com](https://netlify.com) and create a new site
-   - Note your Site ID from the site settings
-3. **Get Netlify Auth Token:**
-   - Go to [app.netlify.com/user/applications#personal-access-tokens](https://app.netlify.com/user/applications#personal-access-tokens)
-   - Generate a new personal access token
-4. **Add GitHub Secrets:**
-   - Go to your GitHub repository → Settings → Secrets and variables → Actions
-   - Add these secrets:
-     - `NETLIFY_AUTH_TOKEN`: Your Netlify personal access token
-     - `NETLIFY_SITE_ID`: Your Netlify site ID
-5. **Push to main branch** - The workflow will automatically deploy!
+   - Connect your GitHub repository
+   - Netlify will auto-detect it's a Vite React app
+3. **Configure build settings:**
+   - Build command: `pnpm build`
+   - Publish directory: `dist`
+   - Node version: `20`
+4. **Set environment variables** (if using custom Cloudinary):
+   - Go to Site settings → Environment variables
+   - Add your Cloudinary credentials
+5. **Deploy!** - Netlify will build and deploy automatically
 
 #### Manual Netlify Deployment
 
 1. Build the project: `pnpm build`
-2. Deploy the `public` folder to Netlify
+2. Deploy the `dist` folder to Netlify
 3. Set environment variables in Netlify dashboard
 
-### Vercel
+### Other Platforms
 
-1. Connect your repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push
+This React app can also be deployed to:
+- **Vercel** - Connect repository and deploy
+- **GitHub Pages** - Use GitHub Actions
+- **Any static hosting** - Just upload the `dist` folder
 
 ## Usage
 
@@ -194,15 +203,50 @@ app/
 
 ### Styling
 
-The app uses Tailwind CSS with custom animations. Modify `tailwind.config.js` and `app/styles/app.css` for styling changes.
+The app uses Tailwind CSS with custom animations. Modify `tailwind.config.js` and `src/index.css` for styling changes.
+
+## Technical Details
+
+### Architecture
+
+- **React 18** - Modern React with hooks and functional components
+- **Vite** - Fast build tool and dev server
+- **React Router** - Client-side routing
+- **TypeScript** - Type safety and better development experience
+- **Tailwind CSS** - Utility-first CSS framework
+
+### Performance Features
+
+- **Hardware acceleration** - All animations use GPU acceleration
+- **Image preloading** - Smooth transitions with preloaded images
+- **3D transforms** - Cinematic drone-like zoom effects
+- **Optimized builds** - Vite produces optimized production bundles
+
+### File Structure
+
+```
+src/
+├── components/
+│   ├── ScreenSaver.tsx    # Main screen saver component
+│   └── ControlPanel.tsx   # Control panel with settings
+├── lib/
+│   ├── imageService.ts    # Image loading and management
+│   ├── transitionService.ts # Transition effects
+│   ├── images.json        # Image configuration
+│   └── config.ts          # App configuration
+├── App.tsx                # Main app component
+├── main.tsx              # React entry point
+└── index.css             # Global styles
+```
 
 ## Troubleshooting
 
 ### Images Not Loading
 
-1. Check Firebase Storage configuration
-2. Ensure images are in the `osho_images` folder
-3. Verify Firebase Storage rules allow public read access
+1. Check Cloudinary configuration in `src/lib/images.json`
+2. Verify your Cloudinary cloud name and image IDs
+3. Ensure images are publicly accessible in Cloudinary
+4. Check browser console for any CORS or loading errors
 
 ### Performance Issues
 

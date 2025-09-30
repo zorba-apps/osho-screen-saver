@@ -1,24 +1,27 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ImageService, ImageData } from '~/lib/imageService';
-import { TransitionService, TransitionType } from '~/lib/transitionService';
+import { ImageService, ImageData } from '../lib/imageService';
+import { TransitionService, TransitionType } from '../lib/transitionService';
 
 interface ScreenSaverProps {
   isPlaying: boolean;
   transitionType: TransitionType;
   transitionDuration: number;
   onImageChange?: (image: ImageData) => void;
+  onNextImage?: () => void;
+  onPreviousImage?: () => void;
 }
 
 export default function ScreenSaver({
   isPlaying,
   transitionType,
   transitionDuration,
-  onImageChange
+  onImageChange,
+  onNextImage,
+  onPreviousImage
 }: ScreenSaverProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState<ImageData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showControlPanel, setShowControlPanel] = useState(false);
   
   const imageService = useRef(ImageService.getInstance());
   const transitionService = useRef(TransitionService.getInstance());
@@ -81,6 +84,52 @@ export default function ScreenSaver({
     );
   }, [currentImageIndex, images, onImageChange]);
 
+  // Navigation functions
+  const goToNextImage = useCallback(() => {
+    if (images.length > 1) {
+      transitionToNextImage();
+    }
+  }, [transitionToNextImage, images.length]);
+
+  const goToPreviousImage = useCallback(() => {
+    if (images.length === 0 || !currentImageRef.current || !nextImageRef.current) return;
+
+    const prevIndex = currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1;
+    const prevImage = images[prevIndex];
+    
+    // Update next image source
+    const nextImageElement = nextImageRef.current.querySelector('img') as HTMLImageElement;
+    if (nextImageElement) {
+      nextImageElement.src = prevImage.url;
+      nextImageElement.alt = prevImage.name;
+    }
+
+    // Apply transition
+    transitionService.current.applyTransition(
+      currentImageRef.current,
+      nextImageRef.current,
+      () => {
+        // After transition completes, swap the refs
+        const temp = currentImageRef.current;
+        currentImageRef.current = nextImageRef.current;
+        nextImageRef.current = temp;
+        
+        setCurrentImageIndex(prevIndex);
+        onImageChange?.(prevImage);
+      }
+    );
+  }, [currentImageIndex, images]);
+
+  // Expose navigation functions to parent
+  useEffect(() => {
+    if (onNextImage) {
+      (window as any).nextImage = goToNextImage;
+    }
+    if (onPreviousImage) {
+      (window as any).previousImage = goToPreviousImage;
+    }
+  }, [onNextImage, onPreviousImage, goToNextImage, goToPreviousImage]);
+
   // Handle play/pause
   useEffect(() => {
     if (isPlaying && images.length > 1) {
@@ -96,15 +145,6 @@ export default function ScreenSaver({
       }
     };
   }, [isPlaying, images.length, transitionToNextImage, transitionDuration]);
-
-  // Handle mouse movement for control panel
-  const handleMouseMove = useCallback(() => {
-    setShowControlPanel(true);
-    const timeout = setTimeout(() => {
-      setShowControlPanel(false);
-    }, 3000);
-    return () => clearTimeout(timeout);
-  }, []);
 
   if (isLoading) {
     return (
@@ -129,10 +169,7 @@ export default function ScreenSaver({
   const nextImage = images[(currentImageIndex + 1) % images.length];
 
   return (
-    <div 
-      className="screen-saver-container"
-      onMouseMove={handleMouseMove}
-    >
+    <div className="screen-saver-container">
       {/* Current Image */}
       <div 
         ref={currentImageRef}
@@ -158,30 +195,6 @@ export default function ScreenSaver({
           className="image-fit"
           draggable={false}
         />
-      </div>
-
-      {/* Control Panel */}
-      <div className={`control-panel ${showControlPanel ? '' : 'hidden'}`}>
-        <div className="flex flex-col space-y-2">
-          <div className="text-sm font-medium mb-2">Screen Saver Controls</div>
-          
-          <div className="flex space-x-2">
-            <button
-              className={`control-button ${isPlaying ? 'active' : ''}`}
-              onClick={() => {/* Toggle handled by parent */}}
-            >
-              {isPlaying ? 'Pause' : 'Play'}
-            </button>
-          </div>
-
-          <div className="text-xs opacity-75">
-            Current: {currentImage?.name || 'Loading...'}
-          </div>
-          
-          <div className="text-xs opacity-75">
-            Transition: {transitionType}
-          </div>
-        </div>
       </div>
     </div>
   );

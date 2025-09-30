@@ -1,6 +1,7 @@
+# Netlify configuration for Osho Screen Saver (React App)
 [build]
   command = "pnpm build"
-  publish = "public"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -9,3 +10,8 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

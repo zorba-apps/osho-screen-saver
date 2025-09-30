@@ -99,21 +99,21 @@ export class TransitionService {
     duration: number,
     onComplete?: () => void
   ): void {
-    // Add zoom effect to fade transition
+    // Add subtle zoom effect to fade transition
     nextElement.style.opacity = '0';
-    nextElement.style.transform = 'scale(1.1)';
+    nextElement.style.transform = 'scale(1.05)';
     nextElement.style.display = 'block';
 
     setTimeout(() => {
-      nextElement.style.transition = `opacity ${duration}ms ease-in-out, transform ${duration}ms ease-in-out`;
+      nextElement.style.transition = `opacity ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
       nextElement.style.opacity = '1';
       nextElement.style.transform = 'scale(1)';
     }, 50);
 
     setTimeout(() => {
-      currentElement.style.transition = `opacity ${duration}ms ease-in-out, transform ${duration}ms ease-in-out`;
+      currentElement.style.transition = `opacity ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
       currentElement.style.opacity = '0';
-      currentElement.style.transform = 'scale(0.95)';
+      currentElement.style.transform = 'scale(0.98)';
     }, duration / 2);
 
     setTimeout(() => {
@@ -142,14 +142,14 @@ export class TransitionService {
       return `${translate} scale(${scale})`;
     };
 
-    nextElement.style.transform = getTransform(direction, 100, 1.1);
+    nextElement.style.transform = getTransform(direction, 100, 1.02);
     nextElement.style.display = 'block';
 
     setTimeout(() => {
-      currentElement.style.transition = `transform ${duration}ms ease-in-out`;
-      nextElement.style.transition = `transform ${duration}ms ease-in-out`;
+      currentElement.style.transition = `transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+      nextElement.style.transition = `transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
       
-      currentElement.style.transform = getTransform(direction, -100, 0.95);
+      currentElement.style.transform = getTransform(direction, -100, 0.98);
       nextElement.style.transform = 'translateX(0) translateY(0) scale(1)';
     }, 50);
 
@@ -166,20 +166,49 @@ export class TransitionService {
     duration: number,
     onComplete?: () => void
   ): void {
-    const scale = type === 'in' ? 0.7 : 1.3;
-    nextElement.style.transform = `scale(${scale})`;
-    nextElement.style.opacity = '0';
-    nextElement.style.display = 'block';
+    // Drone-like zoom effect: simulate camera movement
+    // Zoom-in: drone flies closer (image appears to get larger)
+    // Zoom-out: drone flies away (image appears to get smaller)
+    
+    if (type === 'in') {
+      // Drone coming closer: start far away, fly in
+      nextElement.style.transform = 'scale(0.3) translateZ(-200px)';
+      nextElement.style.opacity = '0';
+      nextElement.style.display = 'block';
+      nextElement.style.filter = 'blur(2px)';
 
-    setTimeout(() => {
-      currentElement.style.transition = `opacity ${duration}ms ease-in-out, transform ${duration}ms ease-in-out`;
-      nextElement.style.transition = `transform ${duration}ms ease-in-out, opacity ${duration}ms ease-in-out`;
-      
-      currentElement.style.opacity = '0';
-      currentElement.style.transform = `scale(${type === 'in' ? 1.1 : 0.9})`;
-      nextElement.style.transform = 'scale(1)';
-      nextElement.style.opacity = '1';
-    }, 50);
+      setTimeout(() => {
+        currentElement.style.transition = `opacity ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), filter ${duration}ms ease-out`;
+        nextElement.style.transition = `transform ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), filter ${duration}ms ease-out`;
+        
+        currentElement.style.opacity = '0';
+        currentElement.style.transform = 'scale(1.2) translateZ(50px)';
+        currentElement.style.filter = 'blur(1px)';
+        
+        nextElement.style.transform = 'scale(1) translateZ(0px)';
+        nextElement.style.opacity = '1';
+        nextElement.style.filter = 'blur(0px)';
+      }, 50);
+    } else {
+      // Drone flying away: start close, fly out
+      nextElement.style.transform = 'scale(1.4) translateZ(100px)';
+      nextElement.style.opacity = '0';
+      nextElement.style.display = 'block';
+      nextElement.style.filter = 'blur(1px)';
+
+      setTimeout(() => {
+        currentElement.style.transition = `opacity ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), filter ${duration}ms ease-out`;
+        nextElement.style.transition = `transform ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), filter ${duration}ms ease-out`;
+        
+        currentElement.style.opacity = '0';
+        currentElement.style.transform = 'scale(0.6) translateZ(-150px)';
+        currentElement.style.filter = 'blur(2px)';
+        
+        nextElement.style.transform = 'scale(1) translateZ(0px)';
+        nextElement.style.opacity = '1';
+        nextElement.style.filter = 'blur(0px)';
+      }, 50);
+    }
 
     setTimeout(() => {
       currentElement.style.display = 'none';
@@ -193,29 +222,33 @@ export class TransitionService {
     duration: number,
     onComplete?: () => void
   ): void {
-    // Start with both images visible
+    // Drone pulse effect: simulate drone hovering and then diving in
     nextElement.style.opacity = '0';
-    nextElement.style.transform = 'scale(0.8)';
+    nextElement.style.transform = 'scale(0.4) translateZ(-300px)';
     nextElement.style.display = 'block';
+    nextElement.style.filter = 'blur(3px)';
 
-    // First phase: zoom out current image while fading
+    // First phase: drone hovers and current image fades
     setTimeout(() => {
-      currentElement.style.transition = `opacity ${duration * 0.4}ms ease-in-out, transform ${duration * 0.4}ms ease-in-out`;
-      currentElement.style.opacity = '0.3';
-      currentElement.style.transform = 'scale(1.1)';
+      currentElement.style.transition = `opacity ${duration * 0.3}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform ${duration * 0.3}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), filter ${duration * 0.3}ms ease-out`;
+      currentElement.style.opacity = '0.1';
+      currentElement.style.transform = 'scale(1.3) translateZ(100px)';
+      currentElement.style.filter = 'blur(2px)';
     }, 50);
 
-    // Second phase: zoom in new image
+    // Second phase: drone dives in quickly
     setTimeout(() => {
-      nextElement.style.transition = `opacity ${duration * 0.6}ms ease-in-out, transform ${duration * 0.6}ms ease-in-out`;
+      nextElement.style.transition = `opacity ${duration * 0.4}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform ${duration * 0.4}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), filter ${duration * 0.4}ms ease-out`;
       nextElement.style.opacity = '1';
-      nextElement.style.transform = 'scale(1.05)';
-    }, duration * 0.3);
+      nextElement.style.transform = 'scale(1.2) translateZ(50px)';
+      nextElement.style.filter = 'blur(0px)';
+    }, duration * 0.2);
 
-    // Third phase: settle to normal scale
+    // Third phase: drone settles to normal position
     setTimeout(() => {
-      nextElement.style.transform = 'scale(1)';
-    }, duration * 0.7);
+      nextElement.style.transition = `transform ${duration * 0.3}ms cubic-bezier(0.68, -0.55, 0.265, 1.55)`;
+      nextElement.style.transform = 'scale(1) translateZ(0px)';
+    }, duration * 0.6);
 
     // Final cleanup
     setTimeout(() => {
