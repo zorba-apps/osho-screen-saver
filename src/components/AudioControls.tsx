@@ -104,7 +104,7 @@ export default function AudioControls({
           {/* Track Info */}
           {audioTrackName && (
             <div className={`text-center text-sm ${colors.text} truncate px-2 mb-2`}>
-              {audioTrackName}
+              {audioTrackName.replace(/^\d+[\s\-_]*/, '').replace(/\.[^/.]+$/, '')}
             </div>
           )}
 
