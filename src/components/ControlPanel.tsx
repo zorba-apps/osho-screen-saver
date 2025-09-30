@@ -243,36 +243,39 @@ export default function ControlPanel({
         </div>
 
 
-        {/* Transition Type Selection */}
-        <TransitionSelector
-          transitionType={transitionType}
-          onTransitionTypeChange={onTransitionTypeChange}
-          isDarkBackground={isDarkBackground}
-        />
+        {/* Transition Controls Card */}
+        <div className={`space-y-4 p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>
+          {/* Transition Type Selection */}
+          <TransitionSelector
+            transitionType={transitionType}
+            onTransitionTypeChange={onTransitionTypeChange}
+            isDarkBackground={isDarkBackground}
+          />
 
-        {/* Transition Duration */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className={`text-sm font-semibold ${colors.text}`}>
-              Transition Duration
-            </label>
-            <span className="text-sm font-mono text-blue-400 bg-blue-500/20 px-2 py-1 rounded-lg">
-              {(transitionDuration / 1000).toFixed(1)}s
-            </span>
-          </div>
-          <div className="relative">
-            <input
-              type="range"
-              min="1000"
-              max="10000"
-              step="500"
-              value={transitionDuration}
-              onChange={(e) => onTransitionDurationChange(Number(e.target.value))}
-              className={`w-full h-2 ${isDarkBackground ? 'bg-white/20' : 'bg-gray-600/30'} rounded-lg appearance-none cursor-pointer slider focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
-            />
-            <div className={`flex justify-between text-xs ${colors.textMuted} mt-2`}>
-              <span>1s</span>
-              <span>10s</span>
+          {/* Transition Duration */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className={`text-sm font-semibold ${colors.text}`}>
+                Transition Duration
+              </label>
+              <span className="text-sm font-mono text-blue-400 bg-blue-500/20 px-2 py-1 rounded-lg">
+                {(transitionDuration / 1000).toFixed(1)}s
+              </span>
+            </div>
+            <div className="relative">
+              <input
+                type="range"
+                min="1000"
+                max="10000"
+                step="500"
+                value={transitionDuration}
+                onChange={(e) => onTransitionDurationChange(Number(e.target.value))}
+                className={`w-full h-2 ${isDarkBackground ? 'bg-white/20' : 'bg-gray-600/30'} rounded-lg appearance-none cursor-pointer slider focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+              />
+              <div className={`flex justify-between text-xs ${colors.textMuted} mt-2`}>
+                <span>1s</span>
+                <span>10s</span>
+              </div>
             </div>
           </div>
         </div>
