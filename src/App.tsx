@@ -4,6 +4,7 @@ import ControlPanel from './components/ControlPanel'
 import { useState, useEffect } from 'react'
 import { TransitionType } from './lib/transitionService'
 import { ImageData } from './lib/imageService'
+import { TouchGestureDetector } from './lib/touchUtils'
 
 function App() {
   const [showControls, setShowControls] = useState(false)
@@ -14,9 +15,21 @@ function App() {
   const [isDarkBackground, setIsDarkBackground] = useState(true)
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [keepPanelVisible, setKeepPanelVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
+    const touchDetector = new TouchGestureDetector()
+
+    // Detect if device is mobile
+    const checkMobile = () => {
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                            ('ontouchstart' in window) ||
+                            (navigator.maxTouchPoints > 0)
+      setIsMobile(isMobileDevice)
+    }
+
+    checkMobile()
 
     const handleMouseMove = () => {
       setShowControls(true)
@@ -25,6 +38,31 @@ function App() {
         timeoutId = setTimeout(() => {
           setShowControls(false)
         }, 3000)
+      }
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchDetector.onTouchStart(e)
+    }
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const swipe = touchDetector.onTouchEnd(e)
+      
+      // Show panel on swipe up or tap
+      if (swipe.direction === 'up' || swipe.direction === 'none') {
+        setShowControls(true)
+        if (!keepPanelVisible) {
+          clearTimeout(timeoutId)
+          timeoutId = setTimeout(() => {
+            setShowControls(false)
+          }, 3000)
+        }
+      }
+      
+      // Hide panel on swipe down
+      if (swipe.direction === 'down') {
+        setShowControls(false)
+        resetKeepPanelVisible()
       }
     }
 
@@ -52,11 +90,15 @@ function App() {
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('fullscreenchange', handleFullScreenChange)
+    document.addEventListener('touchstart', handleTouchStart, { passive: true })
+    document.addEventListener('touchend', handleTouchEnd, { passive: true })
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('fullscreenchange', handleFullScreenChange)
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchend', handleTouchEnd)
       clearTimeout(timeoutId)
     }
   }, [isFullScreen, keepPanelVisible])
@@ -70,7 +112,8 @@ function App() {
   }
 
   const handleTextColorChange = (isDark: boolean) => {
-    setIsDarkBackground(isDark)
+    // Keep consistent color scheme regardless of image brightness
+    setIsDarkBackground(true)
   }
 
   const toggleFullScreen = async () => {
@@ -104,6 +147,17 @@ function App() {
 
   const resetKeepPanelVisible = () => {
     setKeepPanelVisible(false)
+  }
+
+  const downloadCurrentImage = () => {
+    if (currentImage) {
+      const link = document.createElement('a')
+      link.href = currentImage.url
+      link.download = currentImage.name || 'osho-image.jpg'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
   }
 
   const handleNextImage = () => {
@@ -153,6 +207,8 @@ function App() {
           keepPanelVisible={keepPanelVisible}
           onToggleKeepPanelVisible={toggleKeepPanelVisible}
           onResetKeepPanelVisible={resetKeepPanelVisible}
+          isMobile={isMobile}
+          onDownloadImage={downloadCurrentImage}
         />
       )}
     </div>

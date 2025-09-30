@@ -11,29 +11,17 @@ export interface ColorScheme {
 }
 
 export const getColorScheme = (isDarkBackground: boolean): ColorScheme => {
-  if (isDarkBackground) {
-    return {
-      text: 'text-white',
-      textSecondary: 'text-white/70',
-      textTertiary: 'text-white/60',
-      textMuted: 'text-white/50',
-      background: 'bg-white/10',
-      backgroundHover: 'hover:bg-white/20',
-      border: 'border-white/20',
-      borderHover: 'hover:border-white/30',
-    };
-  } else {
-    return {
-      text: 'text-gray-800',
-      textSecondary: 'text-gray-600',
-      textTertiary: 'text-gray-500',
-      textMuted: 'text-gray-400',
-      background: 'bg-gray-800/20',
-      backgroundHover: 'hover:bg-gray-800/30',
-      border: 'border-gray-600/30',
-      borderHover: 'hover:border-gray-600/40',
-    };
-  }
+  // Use consistent high-contrast colors that work on all backgrounds
+  return {
+    text: 'text-white',
+    textSecondary: 'text-white/90',
+    textTertiary: 'text-white/80',
+    textMuted: 'text-white/70',
+    background: 'bg-black/30',
+    backgroundHover: 'hover:bg-black/40',
+    border: 'border-white/30',
+    borderHover: 'hover:border-white/40',
+  };
 };
 
 export const getButtonColors = (isDarkBackground: boolean, isActive: boolean = false) => {
@@ -41,10 +29,10 @@ export const getButtonColors = (isDarkBackground: boolean, isActive: boolean = f
   
   if (isActive) {
     return {
-      background: isDarkBackground ? 'bg-blue-500/20' : 'bg-blue-600/20',
-      backgroundHover: isDarkBackground ? 'hover:bg-blue-500/30' : 'hover:bg-blue-600/30',
-      text: isDarkBackground ? 'text-blue-400' : 'text-blue-600',
-      border: isDarkBackground ? 'border-blue-400/30' : 'border-blue-600/30',
+      background: 'bg-blue-500/30',
+      backgroundHover: 'hover:bg-blue-500/40',
+      text: 'text-blue-300',
+      border: 'border-blue-400/40',
     };
   }
   

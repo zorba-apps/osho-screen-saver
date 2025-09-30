@@ -8,6 +8,7 @@ interface IconButtonProps {
   isActive?: boolean;
   children: ReactNode;
   className?: string;
+  isMobile?: boolean;
 }
 
 export default function IconButton({
@@ -16,22 +17,28 @@ export default function IconButton({
   isDarkBackground,
   isActive = false,
   children,
-  className = ''
+  className = '',
+  isMobile = false
 }: IconButtonProps) {
   const colors = getButtonColors(isDarkBackground, isActive);
+  
+  const padding = isMobile ? 'p-3' : 'p-1.5';
+  const iconSize = isMobile ? 'w-6 h-6' : 'w-4 h-4';
   
   return (
     <button
       onClick={onClick}
       className={`
-        p-1.5 rounded-lg transition-all duration-200 hover:scale-105
+        ${padding} rounded-lg transition-all duration-200 hover:scale-105
         ${colors.background} ${colors.backgroundHover}
         ${colors.text} hover:${isDarkBackground ? 'text-white' : 'text-gray-800'}
         ${className}
       `.trim()}
       title={title}
     >
-      {children}
+      <div className={iconSize}>
+        {children}
+      </div>
     </button>
   );
 }

@@ -19,6 +19,8 @@ interface ControlPanelProps {
   keepPanelVisible?: boolean;
   onToggleKeepPanelVisible?: () => void;
   onResetKeepPanelVisible?: () => void;
+  isMobile?: boolean;
+  onDownloadImage?: () => void;
 }
 
 const transitionTypes: { value: TransitionType; label: string }[] = [
@@ -48,7 +50,9 @@ export default function ControlPanel({
   onToggleFullScreen,
   keepPanelVisible = false,
   onToggleKeepPanelVisible,
-  onResetKeepPanelVisible
+  onResetKeepPanelVisible,
+  isMobile = false,
+  onDownloadImage
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -111,7 +115,7 @@ export default function ControlPanel({
   if (!isVisible) return null;
 
   return (
-    <div className={`fixed top-4 right-4 ${colors.background} ${colors.border} backdrop-blur-2xl rounded-3xl p-6 shadow-2xl border z-50 min-w-80 animate-in slide-in-from-right duration-300 liquid-glass`}>
+    <div className={`fixed ${isMobile ? 'top-2 right-2 left-2' : 'top-4 right-4'} ${colors.background} ${colors.border} backdrop-blur-2xl ${isMobile ? 'rounded-2xl p-4' : 'rounded-3xl p-6'} shadow-2xl border z-50 ${isMobile ? 'min-w-full' : 'min-w-80'} animate-in slide-in-from-right duration-300 liquid-glass`}>
       <div className="space-y-6">
         {/* Header */}
         <div className="space-y-3">
@@ -126,8 +130,9 @@ export default function ControlPanel({
               onClick={hidePanel}
               title="Close Panel (Esc)"
               isDarkBackground={isDarkBackground}
+              isMobile={isMobile}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </IconButton>
@@ -140,29 +145,41 @@ export default function ControlPanel({
               title={keepPanelVisible ? "Unpin Panel" : "Pin Panel"}
               isDarkBackground={isDarkBackground}
               isActive={keepPanelVisible}
+              isMobile={isMobile}
             >
               {keepPanelVisible ? (
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M16 4v12l-4-2-4 2V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2z"/>
+                <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                 </svg>
               ) : (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 4v12l-4-2-4 2V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2z"/>
+                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                 </svg>
               )}
+            </IconButton>
+            <IconButton
+              onClick={onDownloadImage}
+              title="Download Current Image"
+              isDarkBackground={isDarkBackground}
+              isMobile={isMobile}
+            >
+              <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
             </IconButton>
             <IconButton
               onClick={onToggleFullScreen}
               title={isFullScreen ? "Exit Full Screen (F11)" : "Enter Full Screen (F11)"}
               isDarkBackground={isDarkBackground}
               isActive={isFullScreen}
+              isMobile={isMobile}
             >
               {isFullScreen ? (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4.5M9 9H4.5M9 9L3.5 3.5M15 9h4.5M15 9V4.5M15 9l5.5-5.5M9 15v4.5M9 15H4.5M9 15l-5.5 5.5M15 15h4.5M15 15v4.5m0-4.5l5.5 5.5" />
                 </svg>
               ) : (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                 </svg>
               )}
@@ -281,22 +298,53 @@ export default function ControlPanel({
             <div className={`text-xs font-semibold ${colors.textSecondary} uppercase tracking-wide`}>Shortcuts</div>
           </div>
           <div className={`space-y-2 text-xs ${colors.textTertiary}`}>
-            <div className="flex justify-between">
-              <span>Spacebar</span>
-              <span className={colors.text}>Play/Pause</span>
-            </div>
-            <div className="flex justify-between">
-              <span>← →</span>
-              <span className={colors.text}>Navigate</span>
-            </div>
-            <div className="flex justify-between">
-              <span>F11</span>
-              <span className={colors.text}>Full Screen</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Esc</span>
-              <span className={colors.text}>{isFullScreen ? 'Exit Full Screen' : 'Hide Panel'}</span>
-            </div>
+            {isMobile ? (
+              <>
+                <div className="flex justify-between">
+                  <span>Swipe Up</span>
+                  <span className={colors.text}>Show Panel</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Swipe Down</span>
+                  <span className={colors.text}>Hide Panel</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tap</span>
+                  <span className={colors.text}>Play/Pause</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Download Button</span>
+                  <span className={colors.text}>Save Image</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Pin Button</span>
+                  <span className={colors.text}>Always Visible</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-between">
+                  <span>Spacebar</span>
+                  <span className={colors.text}>Play/Pause</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>← →</span>
+                  <span className={colors.text}>Navigate</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Download Button</span>
+                  <span className={colors.text}>Save Image</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>F11</span>
+                  <span className={colors.text}>Full Screen</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Esc</span>
+                  <span className={colors.text}>{isFullScreen ? 'Exit Full Screen' : 'Hide Panel'}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
