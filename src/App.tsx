@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import ScreenSaver from './components/ScreenSaver'
 import ControlPanel from './components/ControlPanel'
+import GalleryModal from './components/GalleryModal'
 import { useState, useEffect, useRef } from 'react'
 import { TransitionType } from './lib/transitionService'
 import { ImageData } from './lib/imageService'
@@ -19,6 +20,7 @@ function App() {
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [keepPanelVisible, setKeepPanelVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   
   // Audio state
   const [audioFile, setAudioFile] = useState<File | null>(null)
@@ -207,7 +209,12 @@ function App() {
   }
 
   const toggleGallery = () => {
-    console.log('Gallery button clicked - modal not implemented yet')
+    console.log('Gallery button clicked')
+    setIsGalleryOpen(true)
+  }
+
+  const closeGallery = () => {
+    setIsGalleryOpen(false)
   }
 
   const handleNextImage = () => {
@@ -298,6 +305,11 @@ function App() {
           onAudioStop={handleAudioStop}
         />
       )}
+      <GalleryModal
+        isOpen={isGalleryOpen}
+        onClose={closeGallery}
+        isDarkBackground={isDarkBackground}
+      />
     </div>
   )
 }
