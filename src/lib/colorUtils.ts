@@ -11,17 +11,31 @@ export interface ColorScheme {
 }
 
 export const getColorScheme = (isDarkBackground: boolean): ColorScheme => {
-  // Use consistent high-contrast colors that work on all backgrounds
-  return {
-    text: 'text-white',
-    textSecondary: 'text-white/90',
-    textTertiary: 'text-white/80',
-    textMuted: 'text-white/70',
-    background: 'bg-black/30',
-    backgroundHover: 'hover:bg-black/40',
-    border: 'border-white/30',
-    borderHover: 'hover:border-white/40',
-  };
+  if (isDarkBackground) {
+    // White text for dark backgrounds
+    return {
+      text: 'text-white',
+      textSecondary: 'text-white/90',
+      textTertiary: 'text-white/80',
+      textMuted: 'text-white/70',
+      background: 'bg-black/30',
+      backgroundHover: 'hover:bg-black/40',
+      border: 'border-white/30',
+      borderHover: 'hover:border-white/40',
+    };
+  } else {
+    // Black text for light backgrounds
+    return {
+      text: 'text-black',
+      textSecondary: 'text-black/90',
+      textTertiary: 'text-black/80',
+      textMuted: 'text-black/70',
+      background: 'bg-white/30',
+      backgroundHover: 'hover:bg-white/40',
+      border: 'border-black/30',
+      borderHover: 'hover:border-black/40',
+    };
+  }
 };
 
 export const getButtonColors = (isDarkBackground: boolean, isActive: boolean = false) => {

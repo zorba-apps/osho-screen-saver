@@ -100,17 +100,17 @@ export default function AudioControls({
 
       {/* Audio Controls */}
       {audioFile && (
-        <div className="space-y-4">
+        <div>
           {/* Track Info */}
           {audioTrackName && (
-            <div className={`text-center text-sm ${colors.text} truncate px-2`}>
+            <div className={`text-center text-sm ${colors.text} truncate px-2 mb-2`}>
               {audioTrackName}
             </div>
           )}
 
           {/* Progress Bar */}
           {audioDuration > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-2 mb-2">
               <div className={`w-full h-2 ${isDarkBackground ? 'bg-white/20' : 'bg-gray-600/30'} rounded-full overflow-hidden`}>
                 <div 
                   className={`h-full ${isAudioPlaying ? 'bg-green-400' : 'bg-blue-400'} transition-all duration-300 ease-out`}
@@ -129,7 +129,7 @@ export default function AudioControls({
           <div className="flex items-center justify-center">
             <button
               onClick={handlePlayPause}
-              className={`w-12 h-12 rounded-full transition-all duration-300 hover:scale-110 ${
+              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 ${
                 isDarkBackground 
                   ? 'bg-white/10 hover:bg-white/20 text-white border border-white/20' 
                   : 'bg-gray-900/10 hover:bg-gray-900/20 text-gray-900 border border-gray-900/20'
@@ -137,12 +137,12 @@ export default function AudioControls({
               title={isAudioPlaying ? 'Pause' : 'Play'}
             >
               {isAudioPlaying ? (
-                <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg className="w-6 h-6 m-auto" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <rect x="6" y="4" width="4" height="16" />
                   <rect x="14" y="4" width="4" height="16" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg className="w-6 h-6 m-auto" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <polygon points="5,3 19,12 5,21" />
                 </svg>
               )}

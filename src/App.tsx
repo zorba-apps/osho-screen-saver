@@ -158,8 +158,8 @@ function App() {
   }
 
   const handleTextColorChange = (isDark: boolean) => {
-    // Keep consistent color scheme regardless of image brightness
-    setIsDarkBackground(true)
+    // Update color scheme based on image brightness
+    setIsDarkBackground(isDark)
   }
 
   const toggleFullScreen = async () => {
