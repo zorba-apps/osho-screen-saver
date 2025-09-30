@@ -1,10 +1,11 @@
 import { Routes, Route } from 'react-router-dom'
 import ScreenSaver from './components/ScreenSaver'
 import ControlPanel from './components/ControlPanel'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { TransitionType } from './lib/transitionService'
 import { ImageData } from './lib/imageService'
 import { TouchGestureDetector } from './lib/touchUtils'
+import { AudioService } from './lib/audioService'
 
 function App() {
   const [showControls, setShowControls] = useState(false)
@@ -18,6 +19,14 @@ function App() {
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [keepPanelVisible, setKeepPanelVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  
+  // Audio state
+  const [audioFile, setAudioFile] = useState<File | null>(null)
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false)
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0)
+  const [audioDuration, setAudioDuration] = useState(0)
+  const [audioTrackName, setAudioTrackName] = useState('')
+  const audioService = useRef(AudioService.getInstance())
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -105,6 +114,39 @@ function App() {
     }
   }, [isFullScreen, keepPanelVisible])
 
+  // Audio service event handlers
+  useEffect(() => {
+    const audio = audioService.current
+    
+    const handleTimeUpdate = (time: number) => {
+      setAudioCurrentTime(time)
+    }
+    
+    const handleDurationChange = (duration: number) => {
+      setAudioDuration(duration)
+    }
+    
+    const handlePlaybackStateChange = (playing: boolean) => {
+      setIsAudioPlaying(playing)
+    }
+    
+    const handleTrackLoaded = (track: any) => {
+      setAudioTrackName(track.name)
+    }
+
+    audio.on('timeUpdate', handleTimeUpdate)
+    audio.on('durationChange', handleDurationChange)
+    audio.on('playbackStateChange', handlePlaybackStateChange)
+    audio.on('trackLoaded', handleTrackLoaded)
+
+    return () => {
+      audio.off('timeUpdate', handleTimeUpdate)
+      audio.off('durationChange', handleDurationChange)
+      audio.off('playbackStateChange', handlePlaybackStateChange)
+      audio.off('trackLoaded', handleTrackLoaded)
+    }
+  }, [])
+
   const handleTogglePlay = () => {
     setIsPlaying(prev => !prev)
   }
@@ -176,6 +218,33 @@ function App() {
     }
   }
 
+  // Audio control functions
+  const handleAudioFileSelect = async (file: File) => {
+    try {
+      setAudioFile(file)
+      await audioService.current.loadFile(file)
+    } catch (error) {
+      console.error('Error loading audio file:', error)
+      alert('Error loading audio file. Please try a different file.')
+    }
+  }
+
+  const handleAudioPlayPause = async () => {
+    try {
+      if (isAudioPlaying) {
+        audioService.current.pause()
+      } else {
+        await audioService.current.play()
+      }
+    } catch (error) {
+      console.error('Error controlling playback:', error)
+    }
+  }
+
+  const handleAudioStop = () => {
+    audioService.current.stop()
+  }
+
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black">
       <Routes>
@@ -212,6 +281,16 @@ function App() {
           onResetKeepPanelVisible={resetKeepPanelVisible}
           isMobile={isMobile}
           onDownloadImage={downloadCurrentImage}
+          // Audio props
+          audioFile={audioFile}
+          isAudioPlaying={isAudioPlaying}
+          audioCurrentTime={audioCurrentTime}
+          audioDuration={audioDuration}
+          audioTrackName={audioTrackName}
+          currentImageUrl={currentImage?.url}
+          onAudioFileSelect={handleAudioFileSelect}
+          onAudioPlayPause={handleAudioPlayPause}
+          onAudioStop={handleAudioStop}
         />
       )}
     </div>

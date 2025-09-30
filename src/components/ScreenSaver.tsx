@@ -92,6 +92,8 @@ export default function ScreenSaver({
         setImages(loadedImages);
         if (loadedImages.length > 0) {
           await imageService.current.preloadAllImages();
+          // Set the first image
+          onImageChange?.(loadedImages[0], 0, loadedImages.length);
         }
         setIsLoading(false);
       } catch (error) {
@@ -101,7 +103,7 @@ export default function ScreenSaver({
     };
 
     loadImages();
-  }, []);
+  }, [onImageChange]);
 
   // Update transition service when props change
   useEffect(() => {
@@ -126,6 +128,10 @@ export default function ScreenSaver({
     // Analyze image brightness for text color
     analyzeImageBrightness(nextImage.url);
 
+    // Update state immediately when transition starts
+    setCurrentImageIndex(nextIndex);
+    onImageChange?.(nextImage, nextIndex, images.length);
+
     // Apply transition
     transitionService.current.applyTransition(
       currentImageRef.current,
@@ -135,9 +141,6 @@ export default function ScreenSaver({
         const temp = currentImageRef.current;
         currentImageRef.current = nextImageRef.current;
         nextImageRef.current = temp;
-        
-        setCurrentImageIndex(nextIndex);
-        onImageChange?.(nextImage, nextIndex, images.length);
       }
     );
   }, [currentImageIndex, images, onImageChange]);
@@ -182,6 +185,10 @@ export default function ScreenSaver({
     // Analyze image brightness for text color
     analyzeImageBrightness(prevImage.url);
 
+    // Update state immediately when transition starts
+    setCurrentImageIndex(prevIndex);
+    onImageChange?.(prevImage, prevIndex, images.length);
+
     // Apply transition
     transitionService.current.applyTransition(
       currentImageRef.current,
@@ -191,9 +198,6 @@ export default function ScreenSaver({
         const temp = currentImageRef.current;
         currentImageRef.current = nextImageRef.current;
         nextImageRef.current = temp;
-        
-        setCurrentImageIndex(prevIndex);
-        onImageChange?.(prevImage, prevIndex, images.length);
         
         // Restart timer if playing
         if (isPlaying) {

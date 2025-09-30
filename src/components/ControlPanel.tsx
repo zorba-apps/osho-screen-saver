@@ -3,6 +3,7 @@ import { TransitionType } from '../lib/transitionService';
 import { getColorScheme } from '../lib/colorUtils';
 import IconButton from './IconButton';
 import TransitionSelector from './TransitionSelector';
+import AudioControls from './AudioControls';
 
 interface ControlPanelProps {
   isPlaying: boolean;
@@ -21,6 +22,16 @@ interface ControlPanelProps {
   onResetKeepPanelVisible?: () => void;
   isMobile?: boolean;
   onDownloadImage?: () => void;
+  // Audio props
+  audioFile?: File | null;
+  isAudioPlaying?: boolean;
+  audioCurrentTime?: number;
+  audioDuration?: number;
+  audioTrackName?: string;
+  currentImageUrl?: string;
+  onAudioFileSelect?: (file: File) => void;
+  onAudioPlayPause?: () => void;
+  onAudioStop?: () => void;
 }
 
 
@@ -40,7 +51,17 @@ export default function ControlPanel({
   onToggleKeepPanelVisible,
   onResetKeepPanelVisible,
   isMobile = false,
-  onDownloadImage
+  onDownloadImage,
+  // Audio props
+  audioFile,
+  isAudioPlaying = false,
+  audioCurrentTime = 0,
+  audioDuration = 0,
+  audioTrackName = '',
+  currentImageUrl,
+  onAudioFileSelect,
+  onAudioPlayPause,
+  onAudioStop
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -255,6 +276,21 @@ export default function ControlPanel({
             </div>
           </div>
         </div>
+
+        {/* Audio Controls */}
+        <AudioControls
+          isDarkBackground={isDarkBackground}
+          isMobile={isMobile}
+          audioFile={audioFile}
+          isAudioPlaying={isAudioPlaying}
+          audioCurrentTime={audioCurrentTime}
+          audioDuration={audioDuration}
+          audioTrackName={audioTrackName}
+          currentImageUrl={currentImageUrl}
+          onAudioFileSelect={onAudioFileSelect}
+          onAudioPlayPause={onAudioPlayPause}
+          onAudioStop={onAudioStop}
+        />
 
         {/* Keyboard Shortcuts */}
         <div className={`p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>
