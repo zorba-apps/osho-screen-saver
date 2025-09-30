@@ -9,6 +9,7 @@ interface ScreenSaverProps {
   onImageChange?: (image: ImageData) => void;
   onNextImage?: () => void;
   onPreviousImage?: () => void;
+  onTextColorChange?: (isDark: boolean) => void;
 }
 
 export default function ScreenSaver({
@@ -17,7 +18,8 @@ export default function ScreenSaver({
   transitionDuration,
   onImageChange,
   onNextImage,
-  onPreviousImage
+  onPreviousImage,
+  onTextColorChange
 }: ScreenSaverProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState<ImageData[]>([]);
@@ -28,6 +30,59 @@ export default function ScreenSaver({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const currentImageRef = useRef<HTMLDivElement>(null);
   const nextImageRef = useRef<HTMLDivElement>(null);
+
+  // Function to analyze image brightness
+  const analyzeImageBrightness = useCallback((imageUrl: string) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Set canvas size to a smaller size for performance
+        const size = 100;
+        canvas.width = size;
+        canvas.height = size;
+
+        // Draw image to canvas
+        ctx.drawImage(img, 0, 0, size, size);
+
+        // Get image data
+        const imageData = ctx.getImageData(0, 0, size, size);
+        const data = imageData.data;
+
+        // Calculate average brightness
+        let totalBrightness = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          // Calculate perceived brightness using luminance formula
+          const brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+          totalBrightness += brightness;
+        }
+
+        const averageBrightness = totalBrightness / (data.length / 4);
+        const isDark = averageBrightness < 0.5;
+        
+        onTextColorChange?.(isDark);
+      } catch (error) {
+        console.warn('Could not analyze image brightness:', error);
+        // Default to dark background assumption
+        onTextColorChange?.(true);
+      }
+    };
+
+    img.onerror = () => {
+      // Default to dark background assumption on error
+      onTextColorChange?.(true);
+    };
+
+    img.src = imageUrl;
+  }, [onTextColorChange]);
 
   // Load images on component mount
   useEffect(() => {
@@ -68,6 +123,9 @@ export default function ScreenSaver({
       nextImageElement.alt = nextImage.name;
     }
 
+    // Analyze image brightness for text color
+    analyzeImageBrightness(nextImage.url);
+
     // Apply transition
     transitionService.current.applyTransition(
       currentImageRef.current,
@@ -103,6 +161,9 @@ export default function ScreenSaver({
       nextImageElement.src = prevImage.url;
       nextImageElement.alt = prevImage.name;
     }
+
+    // Analyze image brightness for text color
+    analyzeImageBrightness(prevImage.url);
 
     // Apply transition
     transitionService.current.applyTransition(

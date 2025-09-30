@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TransitionType } from '../lib/transitionService';
+import { getColorScheme } from '../lib/colorUtils';
+import IconButton from './IconButton';
 
 interface ControlPanelProps {
   isPlaying: boolean;
@@ -11,6 +13,12 @@ interface ControlPanelProps {
   currentImageName?: string;
   onNextImage?: () => void;
   onPreviousImage?: () => void;
+  isDarkBackground?: boolean;
+  isFullScreen?: boolean;
+  onToggleFullScreen?: () => void;
+  keepPanelVisible?: boolean;
+  onToggleKeepPanelVisible?: () => void;
+  onResetKeepPanelVisible?: () => void;
 }
 
 const transitionTypes: { value: TransitionType; label: string }[] = [
@@ -34,10 +42,19 @@ export default function ControlPanel({
   onTransitionDurationChange,
   currentImageName,
   onNextImage,
-  onPreviousImage
+  onPreviousImage,
+  isDarkBackground = true,
+  isFullScreen = false,
+  onToggleFullScreen,
+  keepPanelVisible = false,
+  onToggleKeepPanelVisible,
+  onResetKeepPanelVisible
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Get color scheme based on background
+  const colors = getColorScheme(isDarkBackground);
 
   const showPanel = () => {
     setIsVisible(true);
@@ -55,6 +72,10 @@ export default function ControlPanel({
       clearTimeout(hideTimeout);
     }
     setIsVisible(false);
+    // Reset pin state when panel is closed
+    if (onResetKeepPanelVisible) {
+      onResetKeepPanelVisible();
+    }
   };
 
   useEffect(() => {
@@ -90,31 +111,70 @@ export default function ControlPanel({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-4 right-4 bg-white/10 backdrop-blur-2xl rounded-3xl p-6 shadow-2xl border border-white/20 z-50 min-w-80 animate-in slide-in-from-right duration-300 liquid-glass">
+    <div className={`fixed top-4 right-4 ${colors.background} ${colors.border} backdrop-blur-2xl rounded-3xl p-6 shadow-2xl border z-50 min-w-80 animate-in slide-in-from-right duration-300 liquid-glass`}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full animate-pulse"></div>
-            <h2 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Osho Screen Saver
-            </h2>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full animate-pulse"></div>
+              <h2 className={`text-xl font-bold ${isDarkBackground ? 'bg-gradient-to-r from-white to-gray-300' : 'bg-gradient-to-r from-gray-800 to-gray-600'} bg-clip-text text-transparent`}>
+                Osho Screen Saver
+              </h2>
+            </div>
+            <IconButton
+              onClick={hidePanel}
+              title="Close Panel (Esc)"
+              isDarkBackground={isDarkBackground}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </IconButton>
           </div>
-          <button
-            onClick={hidePanel}
-            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-all duration-200"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          
+          {/* Control Buttons */}
+          <div className="flex items-center justify-center space-x-3">
+            <IconButton
+              onClick={onToggleKeepPanelVisible}
+              title={keepPanelVisible ? "Unpin Panel" : "Pin Panel"}
+              isDarkBackground={isDarkBackground}
+              isActive={keepPanelVisible}
+            >
+              {keepPanelVisible ? (
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M16 4v12l-4-2-4 2V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2z"/>
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 4v12l-4-2-4 2V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2z"/>
+                </svg>
+              )}
+            </IconButton>
+            <IconButton
+              onClick={onToggleFullScreen}
+              title={isFullScreen ? "Exit Full Screen (F11)" : "Enter Full Screen (F11)"}
+              isDarkBackground={isDarkBackground}
+              isActive={isFullScreen}
+            >
+              {isFullScreen ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4.5M9 9H4.5M9 9L3.5 3.5M15 9h4.5M15 9V4.5M15 9l5.5-5.5M9 15v4.5M9 15H4.5M9 15l-5.5 5.5M15 15h4.5M15 15v4.5m0-4.5l5.5 5.5" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                </svg>
+              )}
+            </IconButton>
+          </div>
         </div>
 
         {/* Play/Pause Controls */}
         <div className="flex items-center justify-center space-x-3">
           <button
             onClick={onPreviousImage}
-            className="group p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-all duration-200 hover:scale-105"
+            className={`group p-3 rounded-xl ${colors.background} ${colors.backgroundHover} ${colors.textSecondary} hover:${colors.text} transition-all duration-200 hover:scale-105`}
             title="Previous Image (Left Arrow)"
           >
             <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,7 +207,7 @@ export default function ControlPanel({
           
           <button
             onClick={onNextImage}
-            className="group p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-all duration-200 hover:scale-105"
+            className={`group p-3 rounded-xl ${colors.background} ${colors.backgroundHover} ${colors.textSecondary} hover:${colors.text} transition-all duration-200 hover:scale-105`}
             title="Next Image (Right Arrow)"
           >
             <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,27 +218,27 @@ export default function ControlPanel({
 
         {/* Current Image Info */}
         {currentImageName && (
-          <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 glass-card">
+          <div className={`p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>
             <div className="flex items-center space-x-2 mb-2">
               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-              <div className="text-xs font-semibold text-white/70 uppercase tracking-wide">Now Playing</div>
+              <div className={`text-xs font-semibold ${colors.textSecondary} uppercase tracking-wide`}>Now Playing</div>
             </div>
-            <div className="text-sm font-medium text-white truncate">{currentImageName}</div>
+            <div className={`text-sm font-medium ${colors.text} truncate`}>{currentImageName}</div>
           </div>
         )}
 
         {/* Transition Type Selection */}
         <div className="space-y-3">
-          <label className="block text-sm font-semibold text-white/90 mb-3">
+          <label className={`block text-sm font-semibold ${colors.text} mb-3`}>
             Transition Effect
           </label>
           <select
             value={transitionType}
             onChange={(e) => onTransitionTypeChange(e.target.value as TransitionType)}
-            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 backdrop-blur-sm"
+            className={`w-full ${colors.background} ${colors.border} border rounded-xl px-4 py-3 ${colors.text} text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 backdrop-blur-sm`}
           >
             {transitionTypes.map((type) => (
-              <option key={type.value} value={type.value} className="bg-gray-800 text-white">
+              <option key={type.value} value={type.value} className={`${isDarkBackground ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-800'}`}>
                 {type.label}
               </option>
             ))}
@@ -188,7 +248,7 @@ export default function ControlPanel({
         {/* Transition Duration */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-white/90">
+            <label className={`text-sm font-semibold ${colors.text}`}>
               Transition Duration
             </label>
             <span className="text-sm font-mono text-blue-400 bg-blue-500/20 px-2 py-1 rounded-lg">
@@ -203,9 +263,9 @@ export default function ControlPanel({
               step="500"
               value={transitionDuration}
               onChange={(e) => onTransitionDurationChange(Number(e.target.value))}
-              className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className={`w-full h-2 ${isDarkBackground ? 'bg-white/20' : 'bg-gray-600/30'} rounded-lg appearance-none cursor-pointer slider focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
             />
-            <div className="flex justify-between text-xs text-white/50 mt-2">
+            <div className={`flex justify-between text-xs ${colors.textMuted} mt-2`}>
               <span>1s</span>
               <span>10s</span>
             </div>
@@ -213,25 +273,29 @@ export default function ControlPanel({
         </div>
 
         {/* Keyboard Shortcuts */}
-        <div className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 glass-card">
+        <div className={`p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>
           <div className="flex items-center space-x-2 mb-3">
-            <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-4 h-4 ${colors.textSecondary}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <div className="text-xs font-semibold text-white/70 uppercase tracking-wide">Shortcuts</div>
+            <div className={`text-xs font-semibold ${colors.textSecondary} uppercase tracking-wide`}>Shortcuts</div>
           </div>
-          <div className="space-y-2 text-xs text-white/60">
+          <div className={`space-y-2 text-xs ${colors.textTertiary}`}>
             <div className="flex justify-between">
               <span>Spacebar</span>
-              <span className="text-white/80">Play/Pause</span>
+              <span className={colors.text}>Play/Pause</span>
             </div>
             <div className="flex justify-between">
               <span>← →</span>
-              <span className="text-white/80">Navigate</span>
+              <span className={colors.text}>Navigate</span>
+            </div>
+            <div className="flex justify-between">
+              <span>F11</span>
+              <span className={colors.text}>Full Screen</span>
             </div>
             <div className="flex justify-between">
               <span>Esc</span>
-              <span className="text-white/80">Hide Panel</span>
+              <span className={colors.text}>{isFullScreen ? 'Exit Full Screen' : 'Hide Panel'}</span>
             </div>
           </div>
         </div>
