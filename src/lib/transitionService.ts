@@ -99,27 +99,26 @@ export class TransitionService {
     duration: number,
     onComplete?: () => void
   ): void {
-    // Add subtle zoom effect to fade transition
+    // Set up next image
     nextElement.style.opacity = '0';
-    nextElement.style.transform = 'scale(1.05)';
     nextElement.style.display = 'block';
 
+    // Start both transitions simultaneously for smooth crossfade
     setTimeout(() => {
-      nextElement.style.transition = `opacity ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+      // Next image fades in
+      nextElement.style.transition = `opacity ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
       nextElement.style.opacity = '1';
-      nextElement.style.transform = 'scale(1)';
-    }, 50);
 
-    setTimeout(() => {
-      currentElement.style.transition = `opacity ${duration}ms cubic-bezier(0.4, 0, 0.2, 1), transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+      // Current image fades out
+      currentElement.style.transition = `opacity ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
       currentElement.style.opacity = '0';
-      currentElement.style.transform = 'scale(0.98)';
-    }, duration / 2);
+    }, 16); // Use requestAnimationFrame timing
 
+    // Clean up after transition completes
     setTimeout(() => {
       currentElement.style.display = 'none';
       onComplete?.();
-    }, duration + 100);
+    }, duration + 50);
   }
 
   private applySlideTransition(
