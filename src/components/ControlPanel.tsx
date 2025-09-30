@@ -108,6 +108,9 @@ export default function ControlPanel({
         onNextImage?.();
       } else if (e.key === 'ArrowLeft') {
         onPreviousImage?.();
+      } else if (e.key === 'g' || e.key === 'G') {
+        e.preventDefault();
+        onToggleGallery?.();
       }
     };
 
