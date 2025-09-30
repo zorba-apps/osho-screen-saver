@@ -206,6 +206,10 @@ function App() {
     }
   }
 
+  const toggleGallery = () => {
+    console.log('Gallery button clicked - modal not implemented yet')
+  }
+
   const handleNextImage = () => {
     if ((window as any).nextImage) {
       (window as any).nextImage();
@@ -276,6 +280,7 @@ function App() {
           isDarkBackground={isDarkBackground}
           isFullScreen={isFullScreen}
           onToggleFullScreen={toggleFullScreen}
+          onToggleGallery={toggleGallery}
           keepPanelVisible={keepPanelVisible}
           onToggleKeepPanelVisible={toggleKeepPanelVisible}
           onResetKeepPanelVisible={resetKeepPanelVisible}
