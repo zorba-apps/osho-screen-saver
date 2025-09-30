@@ -91,22 +91,21 @@ export default function AudioControls({
         </button>
       </div>
 
-      {/* Album Art - Always show current image */}
-      {currentImageUrl && (
-        <div className="flex justify-center mb-4">
-          <div className="w-24 h-24 rounded-xl overflow-hidden shadow-lg">
-            <img 
-              src={currentImageUrl} 
-              alt="Current Image" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      )}
-
       {/* Audio Controls */}
       {audioFile && (
         <div>
+          {/* Album Art - Only show when audio is selected */}
+          {currentImageUrl && (
+            <div className="flex justify-center mb-4">
+              <div className="w-24 h-24 rounded-xl overflow-hidden shadow-lg">
+                <img 
+                  src={currentImageUrl} 
+                  alt="Album Art" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          )}
           {/* Track Info */}
           {audioTrackName && (
             <div className={`text-center text-sm ${colors.text} truncate px-2 mb-2`}>
