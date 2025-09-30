@@ -71,10 +71,7 @@ export default function AudioControls({
   const progressPercentage = audioDuration > 0 ? (audioCurrentTime / audioDuration) * 100 : 0;
 
   return (
-    <div className={`space-y-3 p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>
-      <label className={`block text-sm font-semibold ${colors.text}`}>
-        Audio File
-      </label>
+    <div className={`space-y-3 p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>      
       <div className="flex items-center space-x-2">
         <input
           type="file"
