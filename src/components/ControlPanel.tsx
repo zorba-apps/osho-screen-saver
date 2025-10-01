@@ -75,23 +75,36 @@ export default function ControlPanel({
     setIsVisible(true);
     if (hideTimeout) {
       clearTimeout(hideTimeout);
+      setHideTimeout(null);
     }
-    const timeout = setTimeout(() => {
-      setIsVisible(false);
-    }, 5000);
-    setHideTimeout(timeout);
+    // Only set timeout if panel is not pinned
+    if (!keepPanelVisible) {
+      const timeout = setTimeout(() => {
+        setIsVisible(false);
+      }, 5000);
+      setHideTimeout(timeout);
+    }
   };
 
   const hidePanel = () => {
     if (hideTimeout) {
       clearTimeout(hideTimeout);
+      setHideTimeout(null);
     }
     setIsVisible(false);
-    // Reset pin state when panel is closed
-    if (onResetKeepPanelVisible) {
-      onResetKeepPanelVisible();
-    }
+    // Don't reset pin state when hiding panel - let the parent component handle this
   };
+
+  // Handle pin state changes
+  useEffect(() => {
+    if (keepPanelVisible && isVisible) {
+      // Clear any existing timeout when panel is pinned
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        setHideTimeout(null);
+      }
+    }
+  }, [keepPanelVisible, isVisible, hideTimeout]);
 
   useEffect(() => {
     const handleMouseMove = () => {
