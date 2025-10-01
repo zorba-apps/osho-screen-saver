@@ -67,6 +67,7 @@ export default function ControlPanel({
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [buttonImageError, setButtonImageError] = useState(false);
 
   // Get color scheme based on background
   const colors = getColorScheme(isDarkBackground);
@@ -390,11 +391,26 @@ export default function ControlPanel({
             rel="noopener noreferrer"
             className="transition-transform duration-200 hover:scale-105"
           >
-            <img 
-              src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=zorzen&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" 
-              alt="Buy me a coffee" 
-              className="rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200"
-            />
+            {!buttonImageError ? (
+              <img 
+                src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=zorzen&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" 
+                alt="Buy me a coffee" 
+                className="rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200"
+                width="217"
+                style={{  minWidth: '217px' }}
+                onError={() => {
+                  setButtonImageError(true);
+                }}
+                
+              />
+            ) : (
+              <div 
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center font-semibold text-sm"
+                style={{ minWidth: '217px', minHeight: '60px' }}
+              >
+                ☕ Buy me a coffee
+              </div>
+            )}
           </a>
         </div>
       </div>
