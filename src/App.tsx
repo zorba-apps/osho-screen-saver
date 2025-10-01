@@ -2,11 +2,15 @@ import { Routes, Route } from 'react-router-dom'
 import ScreenSaver from './components/ScreenSaver'
 import ControlPanel from './components/ControlPanel'
 import GalleryModal from './components/GalleryModal'
+import { PWAUpdateNotification } from './components/PWAUpdateNotification'
+import { PWAInstallPrompt } from './components/PWAInstallPrompt'
+import { PWAStatusIndicator } from './components/PWAStatusIndicator'
 import { useState, useEffect, useRef } from 'react'
 import { TransitionType } from './lib/transitionService'
 import { ImageData } from './lib/imageService'
 import { TouchGestureDetector } from './lib/touchUtils'
 import { AudioService } from './lib/audioService'
+import { usePWA } from './lib/usePWA'
 
 function App() {
   const [showControls, setShowControls] = useState(false)
@@ -29,6 +33,9 @@ function App() {
   const [audioDuration, setAudioDuration] = useState(0)
   const [audioTrackName, setAudioTrackName] = useState('')
   const audioService = useRef(AudioService.getInstance())
+  
+  // PWA functionality
+  const pwa = usePWA()
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -115,6 +122,7 @@ function App() {
       clearTimeout(timeoutId)
     }
   }, [isFullScreen, keepPanelVisible])
+
 
   // Audio service event handlers
   useEffect(() => {
@@ -256,6 +264,7 @@ function App() {
     audioService.current.stop()
   }
 
+
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black">
       <Routes>
@@ -310,6 +319,11 @@ function App() {
         onClose={closeGallery}
         isDarkBackground={isDarkBackground}
       />
+      
+      {/* PWA Components */}
+      <PWAUpdateNotification />
+      <PWAInstallPrompt />
+      <PWAStatusIndicator />
     </div>
   )
 }
