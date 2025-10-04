@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { getColorScheme } from '../lib/colorUtils';
+import MeditationSelector from './MeditationSelector';
 
 interface AudioControlsProps {
   isDarkBackground?: boolean;
@@ -16,6 +17,10 @@ interface AudioControlsProps {
   onAudioFileSelect?: (file: File) => void;
   onAudioPlayPause?: () => void;
   onAudioStop?: () => void;
+  // Meditation props
+  onMeditationSelect?: (meditationUrl: string, meditationName: string, urls?: string[]) => void;
+  selectedMeditationId?: string;
+  hasMeditationLoaded?: boolean;
 }
 
 export default function AudioControls({
@@ -32,7 +37,11 @@ export default function AudioControls({
   // Audio control functions
   onAudioFileSelect,
   onAudioPlayPause,
-  onAudioStop
+  onAudioStop,
+  // Meditation props
+  onMeditationSelect,
+  selectedMeditationId,
+  hasMeditationLoaded = false
 }: AudioControlsProps) {
   const colors = getColorScheme(isDarkBackground);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +52,7 @@ export default function AudioControls({
       onAudioFileSelect(file);
     }
   };
+
 
   const handlePlayPause = () => {
     if (onAudioPlayPause) {
@@ -72,24 +82,34 @@ export default function AudioControls({
 
   return (
     <div className={`space-y-3 p-4 rounded-xl  ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>      
-      <div className="w-full">
-        <input
-          type="file"
-          accept="audio/*"
-          ref={fileInputRef}
-          onChange={handleFileSelect}
-          className="hidden"
+      {/* Audio Selection Buttons */}
+      <div className="space-y-2">
+        <div>
+          <input
+            type="file"
+            accept="audio/*"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className={`w-full px-4 py-2 rounded-lg ${colors.background} ${colors.backgroundHover} ${colors.textSecondary} hover:${colors.text} transition-all duration-200 hover:scale-105 text-sm`}
+          >
+            {audioFile ? 'Change Osho Discourse' : 'Select Osho Discourse'}
+          </button>
+        </div>
+        
+        <MeditationSelector
+          isDarkBackground={isDarkBackground}
+          isMobile={isMobile}
+          onMeditationSelect={onMeditationSelect}
+          selectedMeditationId={selectedMeditationId}
         />
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          className={`w-full px-4 py-2 rounded-lg ${colors.background} ${colors.backgroundHover} ${colors.textSecondary} hover:${colors.text} transition-all duration-200 hover:scale-105 text-sm`}
-        >
-          {audioFile ? 'Change Osho Discourse' : 'Select Osho Discourse'}
-        </button>
       </div>
 
       {/* Audio Controls */}
-      {audioFile && (
+      {(audioFile || hasMeditationLoaded) && (
         <div>
           {/* Album Art - Only show when audio is selected */}
           {currentImageUrl && (

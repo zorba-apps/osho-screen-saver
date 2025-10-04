@@ -87,6 +87,34 @@ export class AudioService {
     });
   }
 
+  loadFromUrl(url: string, name: string, duration?: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this.audio) {
+        reject(new Error('Audio element not initialized'));
+        return;
+      }
+
+      this.audio.src = url;
+      this.currentTrack = {
+        name,
+        url,
+        duration: duration || 0
+      };
+
+      this.audio.addEventListener('loadedmetadata', () => {
+        this.duration = this.audio?.duration || duration || 0;
+        this.currentTrack!.duration = this.duration;
+        this.emit('trackLoaded', this.currentTrack);
+        resolve();
+      }, { once: true });
+
+      this.audio.addEventListener('error', (e) => {
+        console.error('Error loading audio from URL:', e);
+        reject(e);
+      }, { once: true });
+    });
+  }
+
   play(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!this.audio) {

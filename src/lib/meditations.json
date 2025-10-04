@@ -1,0 +1,54 @@
+{
+  "meditations": [
+    {
+      "id": "nadabrahma-meditation",
+      "name": "Nadabrahma Meditation with Osho Voice",
+      "publicId": "Nadabrahma_Meditaton_with_Osho_Voice_hswhsu",
+      "duration": 3600,
+      "description": "A powerful Nadabrahma meditation guided by Osho's voice",
+      "category": "guided"
+    },
+    {
+      "id": "kundalini-meditation",
+      "name": "Kundalini Meditation",
+      "publicId": "Kundalini_Meditation_gf0caj",
+      "duration": 2700,
+      "description": "A transformative Kundalini meditation for energy awakening",
+      "category": "guided"
+    },
+    {
+      "id": "dynamic-meditation-english",
+      "name": "Dynamic Meditation with Osho (English)",
+      "publicId": "Dynamic_Meditation_with_Osho_in_English_uy66nu",
+      "duration": 3600,
+      "description": "Osho's famous Dynamic Meditation in English - a cathartic practice",
+      "category": "guided"
+    },
+    {
+      "id": "dynamic-meditation-hindi",
+      "name": "Dynamic Meditation with Osho (Hindi)",
+      "publicId": "Dynamic_Meditation_by_Osho_in_Hindi_ruxbpf",
+      "duration": 3600,
+      "description": "Osho's Dynamic Meditation in Hindi - original language version",
+      "category": "guided"
+    },
+    {
+      "id": "nataraj-meditation",
+      "name": "Nataraj Meditation with Osho Voice",
+      "publicId": "Nataraj_Meditation_with_Osho_Voice_xotukm",
+      "duration": 3600,
+      "description": "A beautiful Nataraj meditation guided by Osho's voice",
+      "category": "guided"
+    }
+  ],
+  "cloudName": "dimgca1xu",
+  "transformations": {
+    "format": "mp3",
+    "quality": "auto"
+  },
+  "accessModes": [
+    "raw",
+    "authenticated",
+    "public"
+  ]
+}

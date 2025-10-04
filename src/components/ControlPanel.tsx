@@ -33,6 +33,10 @@ interface ControlPanelProps {
   onAudioFileSelect?: (file: File) => void;
   onAudioPlayPause?: () => void;
   onAudioStop?: () => void;
+  // Meditation props
+  onMeditationSelect?: (meditationUrl: string, meditationName: string, urls?: string[]) => void;
+  selectedMeditationId?: string;
+  hasMeditationLoaded?: boolean;
 }
 
 
@@ -63,7 +67,11 @@ export default function ControlPanel({
   currentImageUrl,
   onAudioFileSelect,
   onAudioPlayPause,
-  onAudioStop
+  onAudioStop,
+  // Meditation props
+  onMeditationSelect,
+  selectedMeditationId,
+  hasMeditationLoaded
 }: ControlPanelProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -322,6 +330,9 @@ export default function ControlPanel({
           onAudioFileSelect={onAudioFileSelect}
           onAudioPlayPause={onAudioPlayPause}
           onAudioStop={onAudioStop}
+          onMeditationSelect={onMeditationSelect}
+          selectedMeditationId={selectedMeditationId}
+          hasMeditationLoaded={hasMeditationLoaded}
         />
 
         {/* Keyboard Shortcuts */}

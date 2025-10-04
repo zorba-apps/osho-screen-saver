@@ -32,6 +32,8 @@ function App() {
   const [audioCurrentTime, setAudioCurrentTime] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
   const [audioTrackName, setAudioTrackName] = useState('')
+  const [selectedMeditationId, setSelectedMeditationId] = useState<string | undefined>()
+  const [hasMeditationLoaded, setHasMeditationLoaded] = useState(false)
   const audioService = useRef(AudioService.getInstance())
   
   // PWA functionality
@@ -241,6 +243,7 @@ function App() {
   const handleAudioFileSelect = async (file: File) => {
     try {
       setAudioFile(file)
+      setHasMeditationLoaded(false) // Clear meditation state when file is selected
       await audioService.current.loadFile(file)
     } catch (error) {
       console.error('Error loading audio file:', error)
@@ -262,6 +265,63 @@ function App() {
 
   const handleAudioStop = () => {
     audioService.current.stop()
+  }
+
+  const handleMeditationSelect = async (meditationUrl: string, meditationName: string, urls?: string[]) => {
+    try {
+      console.log('Loading meditation:', meditationName, meditationUrl)
+      
+      // Clear any existing file selection
+      setAudioFile(null)
+      setHasMeditationLoaded(false)
+      
+      let workingUrl = meditationUrl
+      
+      // If we have multiple URLs, try them in order
+      if (urls && urls.length > 1) {
+        console.log('Trying multiple URL formats...')
+        for (const url of urls) {
+          try {
+            console.log('Testing URL:', url)
+            const response = await fetch(url, { method: 'HEAD' })
+            if (response.ok) {
+              workingUrl = url
+              console.log('Found working URL:', url)
+              break
+            } else {
+              console.log(`URL failed with status ${response.status}:`, url)
+            }
+          } catch (urlError) {
+            console.log('URL test failed:', url, urlError)
+          }
+        }
+      } else {
+        // Test single URL
+        const response = await fetch(meditationUrl, { method: 'HEAD' })
+        if (!response.ok) {
+          throw new Error(`URL not accessible: ${response.status} ${response.statusText}`)
+        }
+      }
+      
+      console.log('Using URL:', workingUrl)
+      
+      // Load meditation from working URL
+      await audioService.current.loadFromUrl(workingUrl, meditationName)
+      
+      // Find the meditation ID from the URL (extract from Cloudinary URL)
+      const meditationId = workingUrl.includes('Nadabrahma_Meditaton_with_Osho_Voice_hswhsu') 
+        ? 'nadabrahma-meditation' 
+        : 'unknown-meditation'
+      
+      setSelectedMeditationId(meditationId)
+      setHasMeditationLoaded(true)
+      
+      console.log('Meditation loaded successfully:', meditationName)
+    } catch (error) {
+      console.error('Error loading meditation:', error)
+      console.error('URL that failed:', meditationUrl)
+      alert(`Error loading meditation: ${error.message || 'Unknown error'}`)
+    }
   }
 
 
@@ -312,6 +372,9 @@ function App() {
           onAudioFileSelect={handleAudioFileSelect}
           onAudioPlayPause={handleAudioPlayPause}
           onAudioStop={handleAudioStop}
+          onMeditationSelect={handleMeditationSelect}
+          selectedMeditationId={selectedMeditationId}
+          hasMeditationLoaded={hasMeditationLoaded}
         />
       )}
       <GalleryModal
