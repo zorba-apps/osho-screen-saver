@@ -177,14 +177,35 @@ export class PWAService {
       try {
         const registration = await navigator.serviceWorker.getRegistration();
         if (registration && registration.waiting) {
+          // Send skip waiting message to the waiting service worker
           registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-          window.location.reload();
+          
+          // Listen for the controlling service worker to change
+          registration.addEventListener('controllerchange', () => {
+            // Dismiss the update notification
+            this.dismissUpdate();
+            // Reload the page to get the new version
+            window.location.reload();
+          });
+          
+          // Fallback: if controllerchange doesn't fire, reload after a short delay
+          setTimeout(() => {
+            this.dismissUpdate();
+            window.location.reload();
+          }, 1000);
+          
           return true;
         }
       } catch (error) {
         console.error('Error updating app:', error);
+        // Even if update fails, dismiss the notification
+        this.dismissUpdate();
+        return false;
       }
     }
+    
+    // If no service worker, just dismiss the notification
+    this.dismissUpdate();
     return false;
   }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { usePWAUpdate } from '../lib/usePWA';
 
 interface PWAUpdateNotificationProps {
@@ -9,10 +9,25 @@ export const PWAUpdateNotification: React.FC<PWAUpdateNotificationProps> = ({
   className = '' 
 }) => {
   const { updateAvailable, updateApp, dismissUpdate } = usePWAUpdate();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   if (!updateAvailable) {
     return null;
   }
+
+  const handleUpdate = async () => {
+    setIsUpdating(true);
+    try {
+      await updateApp();
+    } catch (error) {
+      console.error('Update failed:', error);
+      setIsUpdating(false);
+    }
+  };
+
+  const handleDismiss = () => {
+    dismissUpdate();
+  };
 
   return (
     <div className={`fixed top-4 right-4 z-50 bg-white dark:bg-gray-800 text-black dark:text-white p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm ${className}`}>
@@ -24,13 +39,16 @@ export const PWAUpdateNotification: React.FC<PWAUpdateNotificationProps> = ({
           </p>
           <div className="flex space-x-2">
             <button
-              onClick={updateApp}
-              className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition-colors"
+              onClick={handleUpdate}
+              disabled={isUpdating}
+              className={`bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition-colors ${
+                isUpdating ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
-              Update Now
+              {isUpdating ? 'Updating...' : 'Update Now'}
             </button>
             <button
-              onClick={dismissUpdate}
+              onClick={handleDismiss}
               className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 text-xs px-3 py-1 rounded transition-colors"
             >
               Later
@@ -38,7 +56,7 @@ export const PWAUpdateNotification: React.FC<PWAUpdateNotificationProps> = ({
           </div>
         </div>
         <button
-          onClick={dismissUpdate}
+          onClick={handleDismiss}
           className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           title="Close notification"
           aria-label="Close update notification"
