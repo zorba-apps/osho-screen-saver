@@ -15,6 +15,9 @@ export default {
         'collapse': 'collapse 0.3s ease-in-out',
         'expand': 'expand 0.3s ease-in-out',
         'rotate-chevron': 'rotateChevron 0.3s ease-in-out',
+        'float-in': 'floatIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'float-out': 'floatOut 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'bounce-gentle': 'bounceGentle 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
       keyframes: {
         fadeIn: {
@@ -60,6 +63,20 @@ export default {
         rotateChevron: {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(180deg)' },
+        },
+        floatIn: {
+          '0%': { transform: 'scale(0) rotate(180deg)', opacity: '0' },
+          '50%': { transform: 'scale(1.1) rotate(90deg)', opacity: '0.8' },
+          '100%': { transform: 'scale(1) rotate(0deg)', opacity: '1' },
+        },
+        floatOut: {
+          '0%': { transform: 'scale(1) rotate(0deg)', opacity: '1' },
+          '100%': { transform: 'scale(0) rotate(-180deg)', opacity: '0' },
+        },
+        bounceGentle: {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+          '100%': { transform: 'scale(1)' },
         },
       },
     },

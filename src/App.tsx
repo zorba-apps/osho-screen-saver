@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import ScreenSaver from './components/ScreenSaver'
 import ControlPanel from './components/ControlPanel'
+import FloatingControlButton from './components/FloatingControlButton'
 import GalleryModal from './components/GalleryModal'
 import { PWAUpdateNotification } from './components/PWAUpdateNotification'
 import { PWAInstallPrompt } from './components/PWAInstallPrompt'
@@ -40,7 +41,6 @@ function App() {
   const pwa = usePWA()
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout
     const touchDetector = new TouchGestureDetector()
 
     // Detect if device is mobile
@@ -53,15 +53,6 @@ function App() {
 
     checkMobile()
 
-    const handleMouseMove = () => {
-      setShowControls(true)
-      if (!keepPanelVisible) {
-        clearTimeout(timeoutId)
-        timeoutId = setTimeout(() => {
-          setShowControls(false)
-        }, 3000)
-      }
-    }
 
     const handleTouchStart = (e: TouchEvent) => {
       touchDetector.onTouchStart(e)
@@ -73,12 +64,6 @@ function App() {
       // Show panel on swipe up or tap
       if (swipe.direction === 'up' || swipe.direction === 'none') {
         setShowControls(true)
-        if (!keepPanelVisible) {
-          clearTimeout(timeoutId)
-          timeoutId = setTimeout(() => {
-            setShowControls(false)
-          }, 3000)
-        }
       }
       
       // Hide panel on swipe down
@@ -109,19 +94,16 @@ function App() {
       setIsFullScreen(!!document.fullscreenElement)
     }
 
-    document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('fullscreenchange', handleFullScreenChange)
     document.addEventListener('touchstart', handleTouchStart, { passive: true })
     document.addEventListener('touchend', handleTouchEnd, { passive: true })
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('fullscreenchange', handleFullScreenChange)
       document.removeEventListener('touchstart', handleTouchStart)
       document.removeEventListener('touchend', handleTouchEnd)
-      clearTimeout(timeoutId)
     }
   }, [isFullScreen, keepPanelVisible])
 
@@ -320,7 +302,8 @@ function App() {
     } catch (error) {
       console.error('Error loading meditation:', error)
       console.error('URL that failed:', meditationUrl)
-      alert(`Error loading meditation: ${error.message || 'Unknown error'}`)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      alert(`Error loading meditation: ${errorMessage}`)
     }
   }
 
@@ -343,6 +326,15 @@ function App() {
           } 
         />
       </Routes>
+      {/* Floating Control Button */}
+      <FloatingControlButton
+        isDarkBackground={isDarkBackground}
+        isMobile={isMobile}
+        onTogglePanel={() => setShowControls(!showControls)}
+        isPanelVisible={showControls}
+        isPlaying={isPlaying}
+      />
+
       {showControls && (
         <ControlPanel
           isPlaying={isPlaying}
@@ -362,6 +354,7 @@ function App() {
           onResetKeepPanelVisible={resetKeepPanelVisible}
           isMobile={isMobile}
           onDownloadImage={downloadCurrentImage}
+          onClose={() => setShowControls(false)}
           // Audio props
           audioFile={audioFile}
           isAudioPlaying={isAudioPlaying}

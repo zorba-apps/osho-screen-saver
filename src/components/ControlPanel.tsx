@@ -24,6 +24,7 @@ interface ControlPanelProps {
   onResetKeepPanelVisible?: () => void;
   isMobile?: boolean;
   onDownloadImage?: () => void;
+  onClose?: () => void;
   // Audio props
   audioFile?: File | null;
   isAudioPlaying?: boolean;
@@ -59,6 +60,7 @@ export default function ControlPanel({
   onResetKeepPanelVisible,
   isMobile = false,
   onDownloadImage,
+  onClose,
   // Audio props
   audioFile,
   isAudioPlaying = false,
@@ -74,53 +76,17 @@ export default function ControlPanel({
   selectedMeditationId,
   hasMeditationLoaded
 }: ControlPanelProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
   const [buttonImageError, setButtonImageError] = useState(false);
 
   // Get color scheme based on background
   const colors = getColorScheme(isDarkBackground);
 
-  const showPanel = () => {
-    setIsVisible(true);
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      setHideTimeout(null);
-    }
-    // Only set timeout if panel is not pinned
-    if (!keepPanelVisible) {
-      const timeout = setTimeout(() => {
-        setIsVisible(false);
-      }, 5000);
-      setHideTimeout(timeout);
-    }
-  };
-
   const hidePanel = () => {
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      setHideTimeout(null);
-    }
-    setIsVisible(false);
-    // Don't reset pin state when hiding panel - let the parent component handle this
+    // This will be handled by the parent component
+    // We can add a close button or let the parent handle it
   };
 
-  // Handle pin state changes
   useEffect(() => {
-    if (keepPanelVisible && isVisible) {
-      // Clear any existing timeout when panel is pinned
-      if (hideTimeout) {
-        clearTimeout(hideTimeout);
-        setHideTimeout(null);
-      }
-    }
-  }, [keepPanelVisible, isVisible, hideTimeout]);
-
-  useEffect(() => {
-    const handleMouseMove = () => {
-      showPanel();
-    };
-
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         hidePanel();
@@ -137,22 +103,15 @@ export default function ControlPanel({
       }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('keydown', handleKeyPress);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('keydown', handleKeyPress);
-      if (hideTimeout) {
-        clearTimeout(hideTimeout);
-      }
     };
-  }, [hideTimeout, onTogglePlay, onNextImage, onPreviousImage]);
-
-  if (!isVisible) return null;
+  }, [onTogglePlay, onNextImage, onPreviousImage]);
 
   return (
-    <div className={`fixed ${isMobile ? 'top-2 right-2 left-2 bottom-2' : 'top-4 right-4'} ${colors.background} ${colors.border} backdrop-blur-2xl ${isMobile ? 'rounded-2xl p-4' : 'rounded-3xl p-6'} shadow-2xl border z-50 ${isMobile ? 'min-w-full max-h-[calc(100vh-1rem)]' : 'min-w-80'} animate-in slide-in-from-right duration-300 liquid-glass`}>
+    <div className={`fixed ${isMobile ? 'top-2 right-2 left-2 bottom-2' : 'top-4 right-4'} ${colors.background} ${colors.border} backdrop-blur-2xl ${isMobile ? 'rounded-2xl p-4' : 'rounded-3xl p-6'} shadow-2xl border z-50 ${isMobile ? 'min-w-full max-h-[calc(100vh-1rem)]' : 'min-w-80'} animate-in slide-in-from-right duration-500 ease-out liquid-glass transform-gpu`}>
       <div className={`space-y-6 ${isMobile ? 'overflow-y-auto max-h-full pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent' : ''}`}>
         {/* Header */}
         <div className="space-y-3">
@@ -164,7 +123,7 @@ export default function ControlPanel({
               </h2>
             </div>
             <IconButton
-              onClick={hidePanel}
+              onClick={onClose || (() => {})}
               title="Close Panel (Esc)"
               isDarkBackground={isDarkBackground}
               isMobile={isMobile}
