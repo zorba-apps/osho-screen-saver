@@ -18,6 +18,8 @@ interface MorphingControlPanelProps {
   onToggleFullScreen?: () => void;
   onToggleGallery?: () => void;
   onDownloadImage?: () => void;
+  isBlurBackgroundEnabled?: boolean;
+  onToggleBlurBackground?: () => void;
   // Audio props
   audioFile?: File | null;
   isAudioPlaying?: boolean;
@@ -49,6 +51,8 @@ export default function MorphingControlPanel({
   onToggleFullScreen,
   onToggleGallery,
   onDownloadImage,
+  isBlurBackgroundEnabled = false,
+  onToggleBlurBackground,
   audioFile,
   isAudioPlaying = false,
   audioCurrentTime = 0,
@@ -254,6 +258,8 @@ export default function MorphingControlPanel({
               onToggleGallery={onToggleGallery}
               isMobile={isMobile}
               onDownloadImage={onDownloadImage}
+              isBlurBackgroundEnabled={isBlurBackgroundEnabled}
+              onToggleBlurBackground={onToggleBlurBackground}
               onClose={() => handleTogglePanel()}
               audioFile={audioFile}
               isAudioPlaying={isAudioPlaying}

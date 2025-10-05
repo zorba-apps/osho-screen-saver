@@ -24,6 +24,7 @@ function App() {
   const [keepPanelVisible, setKeepPanelVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [isBlurBackgroundEnabled, setIsBlurBackgroundEnabled] = useState(false)
   
   // Audio state
   const [audioFile, setAudioFile] = useState<File | null>(null)
@@ -310,6 +311,7 @@ function App() {
               onNextImage={handleNextImage}
               onPreviousImage={handlePreviousImage}
               onTextColorChange={handleTextColorChange}
+              isBlurBackgroundEnabled={isBlurBackgroundEnabled}
             />
           } 
         />
@@ -329,9 +331,8 @@ function App() {
         isFullScreen={isFullScreen}
         onToggleFullScreen={toggleFullScreen}
         onToggleGallery={toggleGallery}
-        keepPanelVisible={keepPanelVisible}
-        onToggleKeepPanelVisible={toggleKeepPanelVisible}
-        onResetKeepPanelVisible={resetKeepPanelVisible}
+        isBlurBackgroundEnabled={isBlurBackgroundEnabled}
+        onToggleBlurBackground={() => setIsBlurBackgroundEnabled(!isBlurBackgroundEnabled)}
         onDownloadImage={downloadCurrentImage}
         // Audio props
         audioFile={audioFile}

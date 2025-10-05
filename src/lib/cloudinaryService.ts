@@ -30,8 +30,9 @@ export class CloudinaryService {
         return this.getDemoImages();
       }
       
-      // Build transformation string from config
-      const transformString = `w_${transformations.width},h_${transformations.height},c_${transformations.crop},f_${transformations.format},q_${transformations.quality}`;
+      // Build transformation string for original dimensions
+      // Use c_limit to maintain aspect ratio, f_auto for format, q_auto for quality
+      const transformString = `c_limit,f_${transformations.format},q_${transformations.quality}`;
       
       const images = validImages.map((publicId, index) => ({
         url: `https://res.cloudinary.com/${cloudName}/image/upload/${transformString}/${publicId}`,
@@ -63,7 +64,7 @@ export class CloudinaryService {
       }
       
       const images = data.resources.map((resource: any, index: number) => ({
-        url: `https://res.cloudinary.com/${cloudName}/image/upload/w_1920,h_1080,c_fill,f_auto,q_auto/${resource.public_id}`,
+        url: `https://res.cloudinary.com/${cloudName}/image/upload/c_limit,f_auto,q_auto/${resource.public_id}`,
         name: resource.public_id.replace(/[_-]/g, ' '),
       }));
       
@@ -77,7 +78,7 @@ export class CloudinaryService {
   // Method to add your Cloudinary images
   setCloudinaryImages(imagePublicIds: string[], cloudName: string): void {
     this.images = imagePublicIds.map((publicId, index) => ({
-      url: `https://res.cloudinary.com/${cloudName}/image/upload/w_1920,h_1080,c_fill,f_auto,q_auto/${publicId}`,
+      url: `https://res.cloudinary.com/${cloudName}/image/upload/c_limit,f_auto,q_auto/${publicId}`,
       name: `Osho Image ${index + 1}`,
     }));
   }

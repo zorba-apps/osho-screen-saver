@@ -30,9 +30,7 @@
   ],
   "cloudName": "dimgca1xu",
   "transformations": {
-    "width": 1920,
-    "height": 1080,
-    "crop": "fill",
+    "crop": "limit",
     "format": "auto",
     "quality": "auto"
   }

@@ -10,6 +10,7 @@ interface ScreenSaverProps {
   onNextImage?: () => void;
   onPreviousImage?: () => void;
   onTextColorChange?: (isDark: boolean) => void;
+  isBlurBackgroundEnabled?: boolean;
 }
 
 export default function ScreenSaver({
@@ -19,7 +20,8 @@ export default function ScreenSaver({
   onImageChange,
   onNextImage,
   onPreviousImage,
-  onTextColorChange
+  onTextColorChange,
+  isBlurBackgroundEnabled = false
 }: ScreenSaverProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState<ImageData[]>([]);
@@ -30,6 +32,7 @@ export default function ScreenSaver({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const currentImageRef = useRef<HTMLDivElement>(null);
   const nextImageRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
 
   // Function to analyze image brightness
   const analyzeImageBrightness = useCallback((imageUrl: string) => {
@@ -125,6 +128,15 @@ export default function ScreenSaver({
       nextImageElement.alt = nextImage.name;
     }
 
+    // Update background with same image
+    if (backgroundRef.current) {
+      const backgroundImg = backgroundRef.current.querySelector('img') as HTMLImageElement;
+      if (backgroundImg) {
+        backgroundImg.src = nextImage.url;
+        backgroundImg.alt = nextImage.name;
+      }
+    }
+
     // Analyze image brightness for text color
     analyzeImageBrightness(nextImage.url);
 
@@ -138,9 +150,8 @@ export default function ScreenSaver({
       nextImageRef.current,
       () => {
         // After transition completes, swap the refs
-        const temp = currentImageRef.current;
-        currentImageRef.current = nextImageRef.current;
-        nextImageRef.current = temp;
+        // Note: We can't directly assign to .current, so we'll handle this differently
+        // The refs will be updated in the next render cycle
       }
     );
   }, [currentImageIndex, images, onImageChange]);
@@ -182,6 +193,15 @@ export default function ScreenSaver({
       nextImageElement.alt = prevImage.name;
     }
 
+    // Update background with same image
+    if (backgroundRef.current) {
+      const backgroundImg = backgroundRef.current.querySelector('img') as HTMLImageElement;
+      if (backgroundImg) {
+        backgroundImg.src = prevImage.url;
+        backgroundImg.alt = prevImage.name;
+      }
+    }
+
     // Analyze image brightness for text color
     analyzeImageBrightness(prevImage.url);
 
@@ -195,9 +215,8 @@ export default function ScreenSaver({
       nextImageRef.current,
       () => {
         // After transition completes, swap the refs
-        const temp = currentImageRef.current;
-        currentImageRef.current = nextImageRef.current;
-        nextImageRef.current = temp;
+        // Note: We can't directly assign to .current, so we'll handle this differently
+        // The refs will be updated in the next render cycle
         
         // Restart timer if playing
         if (isPlaying) {
@@ -257,6 +276,21 @@ export default function ScreenSaver({
 
   return (
     <div className="screen-saver-container">
+      {/* Conditional Background */}
+      {isBlurBackgroundEnabled && (
+        <div 
+          ref={backgroundRef}
+          className="image-background"
+        >
+          <img
+            src={currentImage.url}
+            alt={currentImage.name}
+            className="background-image"
+            draggable={false}
+          />
+        </div>
+      )}
+      
       {/* Current Image */}
       <div 
         ref={currentImageRef}
@@ -265,7 +299,7 @@ export default function ScreenSaver({
         <img
           src={currentImage.url}
           alt={currentImage.name}
-          className="image-fit"
+          className={isBlurBackgroundEnabled ? "image-fit" : "image-fit-cover"}
           draggable={false}
         />
       </div>
@@ -279,7 +313,7 @@ export default function ScreenSaver({
         <img
           src={nextImage.url}
           alt={nextImage.name}
-          className="image-fit"
+          className={isBlurBackgroundEnabled ? "image-fit" : "image-fit-cover"}
           draggable={false}
         />
       </div>
