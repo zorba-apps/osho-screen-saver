@@ -44,17 +44,6 @@ export default function MeditationSelector({
     setShowList(false);
   };
 
-  const formatDuration = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    
-    if (hours > 0) {
-      return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    } else {
-      return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-  };
 
   const selectedMeditation = meditations.find(m => m.id === selectedMeditationId);
 
@@ -124,11 +113,6 @@ export default function MeditationSelector({
                         )}
                       </div>
                     </div>
-                    {meditation.duration && meditation.duration > 0 && (
-                      <div className={`text-xs ${isDarkBackground ? 'text-gray-300' : 'text-gray-600'} ml-2 flex-shrink-0`}>
-                        {formatDuration(meditation.duration)}
-                      </div>
-                    )}
                   </div>
                 </button>
               ))
