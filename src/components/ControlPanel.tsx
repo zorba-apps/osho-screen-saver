@@ -4,6 +4,7 @@ import { getColorScheme } from '../lib/colorUtils';
 import IconButton from './IconButton';
 import TransitionSelector from './TransitionSelector';
 import AudioControls from './AudioControls';
+import CollapsibleCard from './CollapsibleCard';
 
 interface ControlPanelProps {
   isPlaying: boolean;
@@ -281,41 +282,51 @@ export default function ControlPanel({
 
 
         {/* Transition Controls Card */}
-        <div className={`space-y-4 p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>
-          {/* Transition Type Selection */}
-          <TransitionSelector
-            transitionType={transitionType}
-            onTransitionTypeChange={onTransitionTypeChange}
-            isDarkBackground={isDarkBackground}
-          />
+        <CollapsibleCard
+          title="Transition Effects"
+          isDarkBackground={isDarkBackground}
+          icon={
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          }
+        >
+          <div className="space-y-4">
+            {/* Transition Type Selection */}
+            <TransitionSelector
+              transitionType={transitionType}
+              onTransitionTypeChange={onTransitionTypeChange}
+              isDarkBackground={isDarkBackground}
+            />
 
-          {/* Transition Duration */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label className={`text-sm font-semibold ${colors.text}`}>
-                Transition Duration
-              </label>
-              <span className="text-sm font-mono text-blue-400 bg-blue-500/20 px-2 py-1 rounded-lg">
-                {(transitionDuration / 1000).toFixed(1)}s
-              </span>
-            </div>
-            <div className="relative">
-              <input
-                type="range"
-                min="1000"
-                max="10000"
-                step="500"
-                value={transitionDuration}
-                onChange={(e) => onTransitionDurationChange(Number(e.target.value))}
-                className={`w-full h-2 ${isDarkBackground ? 'bg-white/20' : 'bg-gray-600/30'} rounded-lg appearance-none cursor-pointer slider focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
-              />
-              <div className={`flex justify-between text-xs ${colors.textMuted} mt-2`}>
-                <span>1s</span>
-                <span>10s</span>
+            {/* Transition Duration */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className={`text-sm font-semibold ${colors.text}`}>
+                  Transition Duration
+                </label>
+                <span className="text-sm font-mono text-blue-400 bg-blue-500/20 px-2 py-1 rounded-lg">
+                  {(transitionDuration / 1000).toFixed(1)}s
+                </span>
+              </div>
+              <div className="relative">
+                <input
+                  type="range"
+                  min="1000"
+                  max="10000"
+                  step="500"
+                  value={transitionDuration}
+                  onChange={(e) => onTransitionDurationChange(Number(e.target.value))}
+                  className={`w-full h-2 ${isDarkBackground ? 'bg-white/20' : 'bg-gray-600/30'} rounded-lg appearance-none cursor-pointer slider focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+                />
+                <div className={`flex justify-between text-xs ${colors.textMuted} mt-2`}>
+                  <span>1s</span>
+                  <span>10s</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </CollapsibleCard>
 
         {/* Audio Controls */}
         <AudioControls
@@ -336,13 +347,16 @@ export default function ControlPanel({
         />
 
         {/* Keyboard Shortcuts */}
-        <div className={`p-4 rounded-xl ${isDarkBackground ? 'bg-white/5 border-white/10' : 'bg-gray-900/10 border-gray-700/20'} backdrop-blur-sm border glass-card`}>
-          <div className="flex items-center space-x-2 mb-3">
-            <svg className={`w-4 h-4 ${colors.textSecondary}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <CollapsibleCard
+          title="Shortcuts"
+          isDarkBackground={isDarkBackground}
+          isCollapsed={true}
+          icon={
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <div className={`text-xs font-semibold ${colors.textSecondary} uppercase tracking-wide`}>Shortcuts</div>
-          </div>
+          }
+        >
           <div className={`space-y-2 text-xs ${colors.textTertiary}`}>
             {isMobile ? (
               <>
@@ -392,7 +406,7 @@ export default function ControlPanel({
               </>
             )}
           </div>
-        </div>
+        </CollapsibleCard>
 
         {/* Buy Me a Coffee */}
         <div className="flex justify-center">
