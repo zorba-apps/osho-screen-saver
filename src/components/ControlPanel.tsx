@@ -39,6 +39,10 @@ interface ControlPanelProps {
   onMeditationSelect?: (meditationUrl: string, meditationName: string, urls?: string[]) => void;
   selectedMeditationId?: string;
   hasMeditationLoaded?: boolean;
+  // Morphing props
+  isMorphing?: boolean;
+  customStyle?: React.CSSProperties;
+  disableAnimation?: boolean;
 }
 
 
@@ -74,7 +78,11 @@ export default function ControlPanel({
   // Meditation props
   onMeditationSelect,
   selectedMeditationId,
-  hasMeditationLoaded
+  hasMeditationLoaded,
+  // Morphing props
+  isMorphing = false,
+  customStyle,
+  disableAnimation = false
 }: ControlPanelProps) {
   const [buttonImageError, setButtonImageError] = useState(false);
 
@@ -111,8 +119,20 @@ export default function ControlPanel({
   }, [onTogglePlay, onNextImage, onPreviousImage]);
 
   return (
-    <div className={`fixed ${isMobile ? 'top-2 right-2 left-2 bottom-2' : 'top-4 right-4'} ${colors.background} ${colors.border} backdrop-blur-2xl ${isMobile ? 'rounded-2xl p-4' : 'rounded-3xl p-6'} shadow-2xl border z-50 ${isMobile ? 'min-w-full max-h-[calc(100vh-1rem)]' : 'min-w-80'} animate-in slide-in-from-right duration-500 ease-out liquid-glass transform-gpu`}>
-      <div className={`space-y-6 ${isMobile ? 'overflow-y-auto max-h-full pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent' : ''}`}>
+    <div 
+      className={`
+        ${isMorphing ? 'absolute' : 'fixed'} 
+        ${isMorphing ? '' : (isMobile ? 'top-4 right-4 left-4 bottom-4' : 'top-8 right-8')} 
+        ${colors.background} ${colors.border} backdrop-blur-2xl 
+        ${isMobile ? 'rounded-2xl p-4' : 'rounded-3xl p-6'} 
+        shadow-xl border z-50 
+        ${isMorphing ? 'w-full h-full' : (isMobile ? 'min-w-full h-auto min-h-[400px] max-h-[calc(100vh-2rem)]' : 'min-w-80 w-auto max-w-[400px] h-auto min-h-[500px] max-h-[800px]')} 
+        ${disableAnimation ? '' : 'animate-in slide-in-from-right duration-500 ease-out'} 
+        liquid-glass transform-gpu
+      `}
+      style={customStyle}
+    >
+      <div className={`space-y-6 ${isMobile ? 'overflow-y-auto max-h-full pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent' : 'overflow-y-auto max-h-full pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent'}`}>
         {/* Header */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">

@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import ScreenSaver from './components/ScreenSaver'
-import ControlPanel from './components/ControlPanel'
-import FloatingControlButton from './components/FloatingControlButton'
+import MorphingControlPanel from './components/MorphingControlPanel'
 import GalleryModal from './components/GalleryModal'
 import { PWAUpdateNotification } from './components/PWAUpdateNotification'
 import { PWAInstallPrompt } from './components/PWAInstallPrompt'
@@ -14,7 +13,6 @@ import { AudioService } from './lib/audioService'
 import { usePWA } from './lib/usePWA'
 
 function App() {
-  const [showControls, setShowControls] = useState(false)
   const [isPlaying, setIsPlaying] = useState(true)
   const [transitionType, setTransitionType] = useState<TransitionType>('fade')
   const [transitionDuration, setTransitionDuration] = useState(3000)
@@ -61,26 +59,16 @@ function App() {
     const handleTouchEnd = (e: TouchEvent) => {
       const swipe = touchDetector.onTouchEnd(e)
       
-      // Show panel on swipe up or tap
-      if (swipe.direction === 'up' || swipe.direction === 'none') {
-        setShowControls(true)
-      }
-      
-      // Hide panel on swipe down
-      if (swipe.direction === 'down') {
-        setShowControls(false)
-        resetKeepPanelVisible()
-      }
+      // Touch gestures are now handled by the MorphingControlPanel
+      // No need to manage showControls state here anymore
     }
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       if (isFullScreen) {
         exitFullScreen()
-      } else {
-        setShowControls(false)
-        resetKeepPanelVisible() // Reset pin state when closing
       }
+      // Panel closing is now handled by MorphingControlPanel
     } else if (e.key === ' ') {
       e.preventDefault()
       setIsPlaying(prev => !prev)
@@ -326,50 +314,39 @@ function App() {
           } 
         />
       </Routes>
-      {/* Floating Control Button */}
-      <FloatingControlButton
+      {/* Morphing Control Panel */}
+      <MorphingControlPanel
         isDarkBackground={isDarkBackground}
         isMobile={isMobile}
-        onTogglePanel={() => setShowControls(!showControls)}
-        isPanelVisible={showControls}
         isPlaying={isPlaying}
+        onTogglePlay={handleTogglePlay}
+        transitionType={transitionType}
+        onTransitionTypeChange={setTransitionType}
+        transitionDuration={transitionDuration}
+        onTransitionDurationChange={setTransitionDuration}
+        onNextImage={handleNextImage}
+        onPreviousImage={handlePreviousImage}
+        isFullScreen={isFullScreen}
+        onToggleFullScreen={toggleFullScreen}
+        onToggleGallery={toggleGallery}
+        keepPanelVisible={keepPanelVisible}
+        onToggleKeepPanelVisible={toggleKeepPanelVisible}
+        onResetKeepPanelVisible={resetKeepPanelVisible}
+        onDownloadImage={downloadCurrentImage}
+        // Audio props
+        audioFile={audioFile}
+        isAudioPlaying={isAudioPlaying}
+        audioCurrentTime={audioCurrentTime}
+        audioDuration={audioDuration}
+        audioTrackName={audioTrackName}
+        currentImageUrl={currentImage?.url}
+        onAudioFileSelect={handleAudioFileSelect}
+        onAudioPlayPause={handleAudioPlayPause}
+        onAudioStop={handleAudioStop}
+        onMeditationSelect={handleMeditationSelect}
+        selectedMeditationId={selectedMeditationId}
+        hasMeditationLoaded={hasMeditationLoaded}
       />
-
-      {showControls && (
-        <ControlPanel
-          isPlaying={isPlaying}
-          onTogglePlay={handleTogglePlay}
-          transitionType={transitionType}
-          onTransitionTypeChange={setTransitionType}
-          transitionDuration={transitionDuration}
-          onTransitionDurationChange={setTransitionDuration}
-          onNextImage={handleNextImage}
-          onPreviousImage={handlePreviousImage}
-          isDarkBackground={isDarkBackground}
-          isFullScreen={isFullScreen}
-          onToggleFullScreen={toggleFullScreen}
-          onToggleGallery={toggleGallery}
-          keepPanelVisible={keepPanelVisible}
-          onToggleKeepPanelVisible={toggleKeepPanelVisible}
-          onResetKeepPanelVisible={resetKeepPanelVisible}
-          isMobile={isMobile}
-          onDownloadImage={downloadCurrentImage}
-          onClose={() => setShowControls(false)}
-          // Audio props
-          audioFile={audioFile}
-          isAudioPlaying={isAudioPlaying}
-          audioCurrentTime={audioCurrentTime}
-          audioDuration={audioDuration}
-          audioTrackName={audioTrackName}
-          currentImageUrl={currentImage?.url}
-          onAudioFileSelect={handleAudioFileSelect}
-          onAudioPlayPause={handleAudioPlayPause}
-          onAudioStop={handleAudioStop}
-          onMeditationSelect={handleMeditationSelect}
-          selectedMeditationId={selectedMeditationId}
-          hasMeditationLoaded={hasMeditationLoaded}
-        />
-      )}
       <GalleryModal
         isOpen={isGalleryOpen}
         onClose={closeGallery}
