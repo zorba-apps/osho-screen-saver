@@ -117,9 +117,9 @@ export default function ControlPanel({
       className={`
         ${isMorphing ? 'absolute' : 'fixed'} 
         ${isMorphing ? '' : (isMobile ? 'top-4 right-4 left-4 bottom-4' : 'top-8 right-8')} 
-        ${colors.background} ${colors.border} backdrop-blur-2xl 
+        bg-white/10 dark:bg-black/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 
         ${isMobile ? 'rounded-2xl p-4' : 'rounded-3xl p-6'} 
-        shadow-xl border z-50 
+        shadow-xl z-50 
         ${isMorphing ? 'w-full h-full' : (isMobile ? 'min-w-full h-auto min-h-[400px] max-h-[calc(100vh-2rem)]' : 'min-w-80 w-auto max-w-[400px] h-auto min-h-[500px] max-h-[800px]')} 
         ${disableAnimation ? '' : 'animate-in slide-in-from-right duration-500 ease-out'} 
         liquid-glass transform-gpu

@@ -17,9 +17,6 @@ interface MorphingControlPanelProps {
   isFullScreen?: boolean;
   onToggleFullScreen?: () => void;
   onToggleGallery?: () => void;
-  keepPanelVisible?: boolean;
-  onToggleKeepPanelVisible?: () => void;
-  onResetKeepPanelVisible?: () => void;
   onDownloadImage?: () => void;
   // Audio props
   audioFile?: File | null;
@@ -51,9 +48,6 @@ export default function MorphingControlPanel({
   isFullScreen = false,
   onToggleFullScreen,
   onToggleGallery,
-  keepPanelVisible = false,
-  onToggleKeepPanelVisible,
-  onResetKeepPanelVisible,
   onDownloadImage,
   audioFile,
   isAudioPlaying = false,
@@ -223,10 +217,12 @@ export default function MorphingControlPanel({
           key="morphing-panel"
           ref={morphingRef}
           className={`
-            ${colors.background} ${colors.border} backdrop-blur-xl border shadow-xl z-[9999]
+            bg-white/10 dark:bg-black/20 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-2xl z-[9999]
             ${isMorphing ? 'overflow-hidden' : 'overflow-visible'}
             relative
             isolate
+            cursor-grab
+            liquid-glass
           `}
           style={{
             ...getPanelStyle(),
@@ -256,9 +252,6 @@ export default function MorphingControlPanel({
               isFullScreen={isFullScreen}
               onToggleFullScreen={onToggleFullScreen}
               onToggleGallery={onToggleGallery}
-              keepPanelVisible={keepPanelVisible}
-              onToggleKeepPanelVisible={onToggleKeepPanelVisible}
-              onResetKeepPanelVisible={onResetKeepPanelVisible}
               isMobile={isMobile}
               onDownloadImage={onDownloadImage}
               onClose={() => handleTogglePanel()}
