@@ -178,7 +178,7 @@ export default function ControlPanel({
           {/* Control Buttons */}
           <div className="flex items-center justify-center space-x-3">
             <IconButton
-              onClick={onToggleKeepPanelVisible}
+              onClick={onToggleKeepPanelVisible || (() => {})}
               title={keepPanelVisible ? "Unpin Panel" : "Pin Panel"}
               isDarkBackground={isDarkBackground}
               isActive={keepPanelVisible}
@@ -195,7 +195,7 @@ export default function ControlPanel({
               )}
             </IconButton>
             <IconButton
-              onClick={onDownloadImage}
+              onClick={onDownloadImage || (() => {})}
               title="Download Current Image"
               isDarkBackground={isDarkBackground}
               isMobile={isMobile}
@@ -205,7 +205,7 @@ export default function ControlPanel({
               </svg>
             </IconButton>
             <IconButton
-              onClick={onToggleFullScreen}
+              onClick={onToggleFullScreen || (() => {})}
               title={isFullScreen ? "Exit Full Screen (F11)" : "Enter Full Screen (F11)"}
               isDarkBackground={isDarkBackground}
               isActive={isFullScreen}
@@ -409,7 +409,7 @@ export default function ControlPanel({
         </CollapsibleCard>
 
         {/* Buy Me a Coffee */}
-        <div className="flex justify-center">
+        <div className="flex justify-center relative z-10">
           <a 
             href="https://www.buymeacoffee.com/zorzen" 
             target="_blank" 

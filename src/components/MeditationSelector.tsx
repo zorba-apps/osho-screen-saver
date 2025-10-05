@@ -91,7 +91,7 @@ export default function MeditationSelector({
 
       {/* Meditation List Dropdown */}
       {showList && (
-        <div className={`absolute top-full left-0 right-0 mt-2 rounded-lg ${isDarkBackground ? 'bg-white/10 border-white/20' : 'bg-gray-900/20 border-gray-700/30'} border backdrop-blur-sm z-50 shadow-xl`}>
+        <div className={`absolute top-full left-0 right-0 mt-2 rounded-lg ${isDarkBackground ? 'bg-white/20 border-white/30' : 'bg-gray-900/30 border-gray-700/50'} border backdrop-blur-md z-[100] shadow-2xl`}>
           <div className="p-2 space-y-1 max-h-64 overflow-y-auto">
             {meditations.length === 0 && !loading ? (
               <div className={`text-center py-4 text-sm ${colors.textTertiary}`}>
@@ -104,10 +104,10 @@ export default function MeditationSelector({
                   onClick={() => handleMeditationSelect(meditation)}
                   className={`w-full text-left px-3 py-3 rounded-md text-sm transition-all duration-200 hover:scale-105 ${
                     selectedMeditationId === meditation.id
-                      ? `${isDarkBackground ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-600/20 text-blue-700'}`
+                      ? `${isDarkBackground ? 'bg-blue-500/30 text-blue-200 border border-blue-400/50' : 'bg-blue-600/30 text-blue-800 border border-blue-500/50'}`
                       : isDarkBackground 
-                        ? 'hover:bg-white/20 text-white' 
-                        : 'hover:bg-gray-900/20 text-gray-900'
+                        ? 'hover:bg-white/30 text-white border border-transparent hover:border-white/20' 
+                        : 'hover:bg-gray-900/30 text-gray-900 border border-transparent hover:border-gray-700/30'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -116,16 +116,16 @@ export default function MeditationSelector({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                       </svg>
                       <div className="flex-1 min-w-0">
-                        <div className="truncate font-medium">{meditation.name}</div>
+                        <div className={`truncate font-medium ${isDarkBackground ? 'text-white' : 'text-gray-900'}`}>{meditation.name}</div>
                         {meditation.description && (
-                          <div className={`text-xs truncate ${colors.textTertiary}`}>
+                          <div className={`text-xs truncate ${isDarkBackground ? 'text-gray-300' : 'text-gray-600'}`}>
                             {meditation.description}
                           </div>
                         )}
                       </div>
                     </div>
                     {meditation.duration && meditation.duration > 0 && (
-                      <div className={`text-xs ${colors.textTertiary} ml-2 flex-shrink-0`}>
+                      <div className={`text-xs ${isDarkBackground ? 'text-gray-300' : 'text-gray-600'} ml-2 flex-shrink-0`}>
                         {formatDuration(meditation.duration)}
                       </div>
                     )}
