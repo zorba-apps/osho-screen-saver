@@ -21,7 +21,7 @@ export default function FloatingControlButton({
 }: FloatingControlButtonProps) {
   const colors = getColorScheme(isDarkBackground);
   const [isVisible, setIsVisible] = useState(true);
-  const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -31,22 +31,22 @@ export default function FloatingControlButton({
     if (isPanelVisible) return; // Don't show button when panel is open
     
     setIsVisible(true);
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      setHideTimeout(null);
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
     }
     
     // Hide button after 3 seconds of no mouse movement
     const timeout = setTimeout(() => {
       setIsVisible(false);
     }, 3000);
-    setHideTimeout(timeout);
+    hideTimeoutRef.current = timeout;
   };
 
   const hideButton = () => {
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      setHideTimeout(null);
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
     }
     setIsVisible(false);
   };
@@ -67,7 +67,7 @@ export default function FloatingControlButton({
 
   const handleTogglePanel = () => {
     if (!isDragging) {
-      updateButtonPosition();
+      // Don't update position on toggle - this causes infinite re-render
       onTogglePanel();
     }
   };
@@ -163,11 +163,11 @@ export default function FloatingControlButton({
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      if (hideTimeout) {
-        clearTimeout(hideTimeout);
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
       }
     };
-  }, [isPanelVisible, hideTimeout]);
+  }, [isPanelVisible]);
 
   // Handle dragging events
   useEffect(() => {

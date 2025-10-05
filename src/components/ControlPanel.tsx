@@ -19,9 +19,6 @@ interface ControlPanelProps {
   isFullScreen?: boolean;
   onToggleFullScreen?: () => void;
   onToggleGallery?: () => void;
-  keepPanelVisible?: boolean;
-  onToggleKeepPanelVisible?: () => void;
-  onResetKeepPanelVisible?: () => void;
   isMobile?: boolean;
   onDownloadImage?: () => void;
   onClose?: () => void;
@@ -59,9 +56,6 @@ export default function ControlPanel({
   isFullScreen = false,
   onToggleFullScreen,
   onToggleGallery,
-  keepPanelVisible = false,
-  onToggleKeepPanelVisible,
-  onResetKeepPanelVisible,
   isMobile = false,
   onDownloadImage,
   onClose,
@@ -156,23 +150,6 @@ export default function ControlPanel({
           
           {/* Control Buttons */}
           <div className="flex items-center justify-center space-x-3">
-            <IconButton
-              onClick={onToggleKeepPanelVisible || (() => {})}
-              title={keepPanelVisible ? "Unpin Panel" : "Pin Panel"}
-              isDarkBackground={isDarkBackground}
-              isActive={keepPanelVisible}
-              isMobile={isMobile}
-            >
-              {keepPanelVisible ? (
-                <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
-              ) : (
-                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
-              )}
-            </IconButton>
             <IconButton
               onClick={onDownloadImage || (() => {})}
               title="Download Current Image"
@@ -354,10 +331,6 @@ export default function ControlPanel({
                 <div className="flex justify-between">
                   <span>Download Button</span>
                   <span className={colors.text}>Save Image</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Pin Button</span>
-                  <span className={colors.text}>Always Visible</span>
                 </div>
               </>
             ) : (
