@@ -34,6 +34,9 @@ interface MorphingControlPanelProps {
   onMeditationSelect?: (meditationUrl: string, meditationName: string, urls?: string[]) => void;
   selectedMeditationId?: string;
   hasMeditationLoaded?: boolean;
+  // PWA props
+  onPWAUpdate?: () => void;
+  canUpdatePWA?: boolean;
 }
 
 export default function MorphingControlPanel({
@@ -64,7 +67,10 @@ export default function MorphingControlPanel({
   onAudioStop,
   onMeditationSelect,
   selectedMeditationId,
-  hasMeditationLoaded
+  hasMeditationLoaded,
+  // PWA props
+  onPWAUpdate,
+  canUpdatePWA = false
 }: MorphingControlPanelProps) {
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   
@@ -284,6 +290,8 @@ export default function MorphingControlPanel({
                 bottom: 'auto'
               }}
               disableAnimation={true}
+              onPWAUpdate={onPWAUpdate}
+              canUpdatePWA={canUpdatePWA}
             />
           </div>
         </div>

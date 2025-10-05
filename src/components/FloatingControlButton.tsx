@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { getColorScheme } from '../lib/colorUtils';
 import IconButton from './IconButton';
 
@@ -27,7 +27,7 @@ export default function FloatingControlButton({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const buttonRef = useRef<HTMLDivElement>(null);
 
-  const showButton = () => {
+  const showButton = useCallback(() => {
     if (isPanelVisible) return; // Don't show button when panel is open
     
     setIsVisible(true);
@@ -41,15 +41,15 @@ export default function FloatingControlButton({
       setIsVisible(false);
     }, 3000);
     hideTimeoutRef.current = timeout;
-  };
+  }, [isPanelVisible]);
 
-  const hideButton = () => {
+  const hideButton = useCallback(() => {
     if (hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
       hideTimeoutRef.current = null;
     }
     setIsVisible(false);
-  };
+  }, []);
 
   const updateButtonPosition = () => {
     if (buttonRef.current && onPositionChange) {
@@ -167,7 +167,7 @@ export default function FloatingControlButton({
         clearTimeout(hideTimeoutRef.current);
       }
     };
-  }, [isPanelVisible]);
+  }, [showButton]);
 
   // Handle dragging events
   useEffect(() => {
@@ -194,7 +194,7 @@ export default function FloatingControlButton({
       // Show button when panel is closed
       showButton();
     }
-  }, [isPanelVisible]);
+  }, [isPanelVisible, showButton, hideButton]);
 
   return (
     <div 

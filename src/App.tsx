@@ -38,6 +38,15 @@ function App() {
   
   // PWA functionality
   const pwa = usePWA()
+  
+  // PWA update handler
+  const handlePWAUpdate = async () => {
+    try {
+      await pwa.updateApp()
+    } catch (error) {
+      console.error('PWA update failed:', error)
+    }
+  }
 
   useEffect(() => {
     const touchDetector = new TouchGestureDetector()
@@ -347,6 +356,9 @@ function App() {
         onMeditationSelect={handleMeditationSelect}
         selectedMeditationId={selectedMeditationId}
         hasMeditationLoaded={hasMeditationLoaded}
+        // PWA props
+        onPWAUpdate={handlePWAUpdate}
+        canUpdatePWA={pwa.updateAvailable}
       />
       <GalleryModal
         isOpen={isGalleryOpen}
